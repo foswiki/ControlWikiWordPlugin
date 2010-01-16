@@ -12,6 +12,62 @@ prefer.
 
 ---++ Usage
 
+This plugin provides 3 functions: 
+   * Regular Expression rules-based Singleton WikiWord linking
+   * Rules-based blocking of WikiWord linking backwards compatible to the !StopWikiWordPlugin
+   * !Singleton WikiWord linking backwards compatible to the !SingletonWikiWordPlugin
+
+---+++ Regular Expression rules-based WikiWords
+
+This feature has no WikiUser configurable features.  The System Administrator
+can set regular expression rules in the Foswiki Configuration that will match
+topic names useful for your configuration.   Examples might include bug
+tracking link on http://foswiki.org/Tasks, where Task topics are the word
+_Task_ followed by a 3-5 digit number.
+
+The sample configuration will provide a link for Question123
+
+---+++ Rules-based blocking of WikiWord linking
+
+In this mode, the Plugin prevents automatic linking of selected [[%SYSTEMWEB%.WikiWord][WikiWords]] such as <nop>LinuxWorld or <nop>MacDonald.
+
+!WikiWords that should not be automatically linked are listed in a
+STOPWIKIWORDLINK preferences setting.  This is typically done in the
+[[%LOCALSITEPREFS%]], but can be done also in any web (in %WEBPREFSTOPIC%), in
+the User topic for personal preferences, or in a single topic. See sample entry in the Plugin settings.
+
+%X% Note:  Settings are _not_ read from this topic.
+
+   * Add a STOPWIKIWORDLINK setting to the [[%LOCALSITEPREFS%]] topic, listing all !WikiWords to exclude from auto-linking. Example:
+<verbatim>  
+   * Set STOPWIKIWORDLINK = LinuxWorld, MacDonald
+</verbatim>
+
+   * Test if the installation was successful. The following words should not be linked when above example is used:
+      * LinuxWorld, MacDonald
+
+---+++ SingletonWikiWordPlugin compatible operation
+
+This designates that a single word is a reference to a single word. To show
+Foswiki that it should be linked to, write a dot before it.
+
+Hence if you have the WikiWord Ontology you can link to it as <nop>.Ontology
+
+In fact, you can already force a single word link to a WikiWord by enclosing
+it in double square brackets, like this:
+<nop>[<nop>[Ontology]]
+
+This plugin allows you to write it without the square brackets.
+
+The syntax was chosen to be an extension of the Web.Topic syntax
+
+Test:
+| *Written as* | *Test* | *If it is installed properly you see* | *If it
+isn't, you will see* |
+| .Singleword | .Singleword  | [[Singleword]] | <nop>.Singleword |
+
+
+
 ---++ Examples
 
 ---++ Installation Instructions
@@ -23,8 +79,8 @@ prefer.
 Many thanks to the following sponsors for supporting this work:
    * Acknowledge any sponsors here
 
-|  Author(s): | |
-|  Copyright: | &copy; |
+|  Author(s): | Foswiki:Main/GeorgeClark |
+|  Copyright: | &copy; George Clark.   Adapted from code Copyright: <br /> Copyright (C) 2000-2001 Andrea Sterbini, a.sterbini@flashnet.it <br /> Copyright (C) 2001, 2006 Peter Thoeny, Peter@Thoeny.com |
 |  License: | [[http://www.gnu.org/licenses/gpl.html][GPL (Gnu General Public License)]] |
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
