@@ -31,22 +31,24 @@ The sample configuration will provide a link for Question123
 
 In this mode, the Plugin prevents automatic linking of selected [[%SYSTEMWEB%.WikiWord][WikiWords]] such as <nop>LinuxWorld or <nop>MacDonald.
 
+---++++ Configuration 
 !WikiWords that should not be automatically linked are listed in a
 STOPWIKIWORDLINK preferences setting.  This is typically done in the
 [[%LOCALSITEPREFS%]], but can be done also in any web (in %WEBPREFSTOPIC%), in
 the User topic for personal preferences, or in a single topic. See sample entry in the Plugin settings.
 
-%X% Note:  Settings are _not_ read from this topic.
+%X% Note:  Global settings are _not_ read from this topic.
 
    * Add a STOPWIKIWORDLINK setting to the [[%LOCALSITEPREFS%]] topic, listing all !WikiWords to exclude from auto-linking. Example:
 <verbatim>  
    * Set STOPWIKIWORDLINK = LinuxWorld, MacDonald
 </verbatim>
 
-   * Test if the installation was successful. The following words should not be linked when above example is used:
+---++++ Examples
+   * Test if the installation was successful. The following words will not be linked in this topic.  (The above setting needs to be copied to one of the preferences locations to activate for other webs or topics.):
       * LinuxWorld, MacDonald
 
----+++ SingletonWikiWordPlugin compatible operation
+---+++ Singleton<nop>WikiWordPlugin compatible operation
 
 This designates that a single word is a reference to a single word. To show
 Foswiki that it should be linked to, write a dot before it.
@@ -61,14 +63,22 @@ This plugin allows you to write it without the square brackets.
 
 The syntax was chosen to be an extension of the Web.Topic syntax
 
+---++++ Configuration
+
+To enable backwards compatible operation with the TWiki
+!SingletonWikiWordPlugin, Add the CONTROLWIKIWORDPLUGIN_DOTSINGLETONENABLE
+setting to the [[%LOCALSITEPREFS%]] topic or in any web in %WEBPREFSTOPIC%, or
+in user or individual topics.
+
+<verbatim>  
+   * Set CONTROLWIKIWORDPLUGIN_DOTSINGLETONENABLE = 1
+</verbatim>
+
+---++++ Examples
+
 Test:
-| *Written as* | *Test* | *If it is installed properly you see* | *If it
-isn't, you will see* |
-| .Singleword | .Singleword  | [[Singleword]] | <nop>.Singleword |
-
-
-
----++ Examples
+| *Written as* | *Test* | *If it is installed properly you see* | *If it isn't, you will see* |
+| .<nop>Singleword | .Singleword  | [[Singleword]] | <nop>.Singleword |
 
 ---++ Installation Instructions
 

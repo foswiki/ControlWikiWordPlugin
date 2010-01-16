@@ -20,10 +20,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details, published at 
 # http://www.gnu.org/copyleft/gpl.html
-#
-# ControlWikiWordPlugin implements features as described on
-# http://twiki.org/cgi-bin/view/Codev/?topic=SingletonWikiWord
-
+ 
 # =========================
 package Foswiki::Plugins::ControlWikiWordPlugin;    # change the package name!!!
 
@@ -34,7 +31,7 @@ use vars qw( $VERSION $RELEASE $debug $pluginName $stopWordsRE );
 # =========================
 use vars qw(
         $web $topic $user $installWeb $VERSION $RELEASE $debug
-        $stopWordsRE
+        $stopWordsRE $dotSINGLETON
     );
 
 # This should always be $Rev: 1340 $ so that Foswiki can determine the checked-in
@@ -46,6 +43,19 @@ $VERSION = '$Rev: 1340 $';
 # It is *not* used by the build automation tools, but is reported as part
 # of the version number in PLUGINDESCRIPTIONS.
 $RELEASE = '0.9';
+
+# You must set $NO_PREFS_IN_TOPIC to 0 if you want your plugin to use
+# preferences set in the plugin topic. This is required for compatibility
+# with older plugins, but imposes a significant performance penalty, and
+# is not recommended. Instead, leave $NO_PREFS_IN_TOPIC at 1 and use
+# =$Foswiki::cfg= entries, or if you want the users
+# to be able to change settings, then use standard Foswiki preferences that
+# can be defined in your %USERSWEB%.SitePreferences and overridden at the web
+# and topic level.
+#
+# %SYSTEMWEB%.DevelopingPlugins has details of how to define =$Foswiki::cfg=
+# entries so they can be used with =configure=.
+our $NO_PREFS_IN_TOPIC = 1;
 
 
 # =========================
@@ -63,17 +73,24 @@ sub initPlugin
     $debug = &Foswiki::Func::getPreferencesFlag( "CONTROLWIKIWORDPLUGIN_DEBUG" );
 
     my $stopWords = Foswiki::Func::getPreferencesValue( "STOPWIKIWORDLINK" )
-                 || Foswiki::Func::getPreferencesValue( "\U$pluginName\E_STOPWIKIWORDLINK" )
-                 || Foswiki::Func::getPreferencesValue( "STOPWIKIWORDPLUGIN_STOPWIKIWORDLINK" )
-                 || 'UndefinedStopWikiWordLink';
+                 || Foswiki::Func::getPreferencesValue( "CONTROLWIKIWORDPLUGIN_STOPWIKIWORDLINK" )
+                 || Foswiki::Func::getPreferencesValue( "STOPWIKIWORDLINKPLUGIN_STOPWIKIWORDLINK" )
+                 || '';
 
-    # build regex:
-    $stopWords =~ s/\, */\|/go;
-    $stopWords =~ s/^ *//o;
-    $stopWords =~ s/ *$//o;
-    $stopWords =~ s/[^A-Za-z0-9\|]//go;
-    $stopWordsRE = "(^|[\( \n\r\t\|])($stopWords)"; # WikiWord preceeded by space or parens
-    Foswiki::Func::writeDebug( "- $pluginName stopWordsRE: $stopWordsRE" ) if $debug;
+    $stopWordsRE = '';         # Clear - handler only processes topic if provided
+
+    if ($stopWords) {
+       # build regularex:
+       $stopWords =~ s/\, */\|/go;
+       $stopWords =~ s/^ *//o;
+       $stopWords =~ s/ *$//o;
+       $stopWords =~ s/[^A-Za-z0-9\|]//go;
+       $stopWordsRE = "(^|[\( \n\r\t\|])($stopWords)"; # WikiWord preceeded by space or parens
+       Foswiki::Func::writeDebug( "- $pluginName stopWordsRE: $stopWordsRE" ) if $debug;
+    }
+
+    $dotSINGLETON = Foswiki::Func::getPreferencesValue( "CONTROLWIKIWORDPLUGIN_DOTSINGLETONENABLE" );
+
 
     # Plugin correctly initialized
     writeDebug( "- Foswiki::Plugins::ControlWikiWordPlugin::initPlugin( $web.$topic ) is OK" );
@@ -87,10 +104,9 @@ sub commonTagsHandler
 
     writeDebug( "- X - ControlWikiWordPlugin::commonTagsHandler( $_[0]$_[2].$_[1] )" );
 
-    # This is the place to define customized tags and variables
-    # Called by sub handleCommonTags, after %INCLUDE:"..."%
-    $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1".&Foswiki::Func::internalLink("[[$2]]",$web,$web,"",1)/geo;
-
+    unless ( Foswiki::Func::getPreferencesFlag('NOAUTOLINK') ) {
+        $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1".&Foswiki::Func::internalLink("[[$2]]",$web,$web,"",1)/geo if ($dotSINGLETON);
+    }
 }
 
 sub writeDebug 
@@ -103,7 +119,7 @@ sub preRenderingHandler {
     # do not uncomment, use $_[0], $_[1]... instead
     #my( $text, $pMap ) = @_;
 
-    $_[0] =~ s/$stopWordsRE/$1<nop>$2/g;
+       $_[0] =~ s/$stopWordsRE/$1<nop>$2/g if ($stopWordsRE);
 }
 
 1;
