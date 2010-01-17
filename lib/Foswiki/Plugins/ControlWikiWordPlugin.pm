@@ -57,10 +57,6 @@ $RELEASE = '0.9';
 # entries so they can be used with =configure=.
 our $NO_PREFS_IN_TOPIC = 1;
 
-my $TT0 = chr(0);
-my $TT1 = chr(1);
-my $TT2 = chr(2);
-
 # =========================
 sub initPlugin
 {
@@ -96,23 +92,10 @@ sub initPlugin
 
 
     # Plugin correctly initialized
-    writeDebug( "- Foswiki::Plugins::ControlWikiWordPlugin::initPlugin( $web.$topic ) is OK" );
+    Foswiki::Func::writeDebug( "- Foswiki::Plugins::ControlWikiWordPlugin::initPlugin( $web.$topic ) is OK" );
     return 1;
 }
 
-# =========================
-#sub commonTagsHandler
-#{
-### my ( $text, $topic, $web ) = @_;   # do not uncomment, use $_[0], $_[1]... instead
-
-#    writeDebug( "- X - ControlWikiWordPlugin::commonTagsHandler( $_[0]$_[2].$_[1] )" );
-
-
-#    unless ( Foswiki::Func::getPreferencesFlag('NOAUTOLINK') ) {
-#        $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1".&Foswiki::Func::internalLink("[[$2]]",$web,$web,"",1)/geo if ($dotSINGLETON);
-#    }
-
-#}
 
 sub writeDebug 
 {
@@ -126,29 +109,44 @@ sub preRenderingHandler {
 
     my $renderer         = $Foswiki::Plugins::SESSION->{renderer};
     my $removedTextareas = {};
+    my $removedProtected = {};
 
     $_[0] =~ s/$stopWordsRE/$1<nop>$2/g if ($stopWordsRE);
 
-    eval ('$renderer->takeOutBlocks');
-    my $tOB = $@;
 
-   unless ( Foswiki::Func::getPreferencesFlag('NOAUTOLINK') ) {
+    # Don't bother at all if NOAUTOLINK is requested for the topic.
+    unless ( Foswiki::Func::getPreferencesFlag('NOAUTOLINK') ) {
 
-        if ($tOB eq "") {
-            $_[0] = $renderer->takeOutBlocks( $_[0], 'noautolink', $removedTextareas );
-        } else {
+        # Determine which release of Foswiki in use - R1.1 moved takeOUtBlocks into Foswiki proper
+        # SMELL: Directly calling Foswiki and Render functions is not recommended.
+        # This needs to be validated for any major changes in Foswiki.   Tested on 1.0.9 and 1.1.0 trunk
+        #
+        eval ('$renderer->takeOutBlocks');
+        #Foswiki::Func::writeDebug( "Eval returned $@" );
+        my $tOB = $@;    # If $tOB contains an error, then it failed, so use the Foswiki 1.1+ version
+
+        # Remove any <noautolink> blocks from the topic
+        if ($tOB) {
             $_[0] = Foswiki::takeOutBlocks( $_[0], 'noautolink', $removedTextareas );
+        } else {
+            $_[0] = $renderer->takeOutBlocks( $_[0], 'noautolink', $removedTextareas );
         }
+
+        # Also remove any forced links from the topic.
+        $_[0] = $renderer->_takeOutProtected( $_[0], qr/\[\[(?:.*?)\]\]/si, 'wikilink', $removedProtected );
+        $_[0] = $renderer->_takeOutProtected( $_[0], qr/<a\s(?:.*?)<\/a>/si, 'htmllink', $removedProtected );
 
         $_[0] =~ s/(\s+)(Question[[:digit:]]{3,5})(\s+)/"$1"."[[$web.$2][$2]]".$3/geo;
-
         $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1"."[[$web.$2][$2]]"/geo if ($dotSINGLETON);
-    
-        if ($tOB eq "") {
-            $renderer->putBackBlocks( \$_[0], $removedTextareas, 'noautolink', 'noautolink' );
-        } else {
+   
+        # put back everything that was removed
+        if ($tOB) {
             Foswiki::putBackBlocks( \$_[0], $removedTextareas, 'noautolink', 'noautolink' );
+        } else {
+            $renderer->putBackBlocks( \$_[0], $removedTextareas, 'noautolink', 'noautolink' );
         }
+        $renderer->_putBackProtected( \$_[0], 'wikilink',  $removedProtected );
+        $renderer->_putBackProtected( \$_[0], 'htmllink',  $removedProtected );
     }
 
 }
