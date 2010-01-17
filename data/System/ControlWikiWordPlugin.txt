@@ -22,10 +22,14 @@ This plugin provides 3 functions:
 This feature has no WikiUser configurable features.  The System Administrator
 can set regular expression rules in the Foswiki Configuration that will match
 topic names useful for your configuration.   Examples might include bug
-tracking link on http://foswiki.org/Tasks, where Task topics are the word
-_Task_ followed by a 3-5 digit number.
+tracking link on http://foswiki.org/Support, where question topics are the word
+_Question_ followed by a 3-5 digit number.
 
 The sample configuration will provide a link for Question123
+
+<noautolink> 
+&lt;noautolink> sections are honored Question456 &lt;/noautolink>
+</noautolink>
 
 ---+++ Rules-based blocking of WikiWord linking
 

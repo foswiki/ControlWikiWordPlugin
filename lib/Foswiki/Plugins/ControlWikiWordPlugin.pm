@@ -57,6 +57,9 @@ $RELEASE = '0.9';
 # entries so they can be used with =configure=.
 our $NO_PREFS_IN_TOPIC = 1;
 
+my $TT0 = chr(0);
+my $TT1 = chr(1);
+my $TT2 = chr(2);
 
 # =========================
 sub initPlugin
@@ -98,16 +101,18 @@ sub initPlugin
 }
 
 # =========================
-sub commonTagsHandler
-{
+#sub commonTagsHandler
+#{
 ### my ( $text, $topic, $web ) = @_;   # do not uncomment, use $_[0], $_[1]... instead
 
-    writeDebug( "- X - ControlWikiWordPlugin::commonTagsHandler( $_[0]$_[2].$_[1] )" );
+#    writeDebug( "- X - ControlWikiWordPlugin::commonTagsHandler( $_[0]$_[2].$_[1] )" );
 
-    unless ( Foswiki::Func::getPreferencesFlag('NOAUTOLINK') ) {
-        $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1".&Foswiki::Func::internalLink("[[$2]]",$web,$web,"",1)/geo if ($dotSINGLETON);
-    }
-}
+
+#    unless ( Foswiki::Func::getPreferencesFlag('NOAUTOLINK') ) {
+#        $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1".&Foswiki::Func::internalLink("[[$2]]",$web,$web,"",1)/geo if ($dotSINGLETON);
+#    }
+
+#}
 
 sub writeDebug 
 {
@@ -119,7 +124,33 @@ sub preRenderingHandler {
     # do not uncomment, use $_[0], $_[1]... instead
     #my( $text, $pMap ) = @_;
 
-       $_[0] =~ s/$stopWordsRE/$1<nop>$2/g if ($stopWordsRE);
+    my $renderer         = $Foswiki::Plugins::SESSION->{renderer};
+    my $removedTextareas = {};
+
+    $_[0] =~ s/$stopWordsRE/$1<nop>$2/g if ($stopWordsRE);
+
+    eval ('$renderer->takeOutBlocks');
+    my $tOB = $@;
+
+   unless ( Foswiki::Func::getPreferencesFlag('NOAUTOLINK') ) {
+
+        if ($tOB eq "") {
+            $_[0] = $renderer->takeOutBlocks( $_[0], 'noautolink', $removedTextareas );
+        } else {
+            $_[0] = Foswiki::takeOutBlocks( $_[0], 'noautolink', $removedTextareas );
+        }
+
+        $_[0] =~ s/(\s+)(Question[[:digit:]]{3,5})(\s+)/"$1"."[[$web.$2][$2]]".$3/geo;
+
+        $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1"."[[$web.$2][$2]]"/geo if ($dotSINGLETON);
+    
+        if ($tOB eq "") {
+            $renderer->putBackBlocks( \$_[0], $removedTextareas, 'noautolink', 'noautolink' );
+        } else {
+            Foswiki::putBackBlocks( \$_[0], $removedTextareas, 'noautolink', 'noautolink' );
+        }
+    }
+
 }
 
 1;
