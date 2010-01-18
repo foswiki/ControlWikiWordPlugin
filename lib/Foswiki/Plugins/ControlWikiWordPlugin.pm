@@ -25,24 +25,21 @@
 package Foswiki::Plugins::ControlWikiWordPlugin;    # change the package name!!!
 
 use strict;
-
-use vars qw( $VERSION $RELEASE $debug $pluginName $stopWordsRE );
-
-# =========================
-use vars qw(
-  $web $topic $user $installWeb $VERSION $RELEASE $debug
-  $stopWordsRE $dotSINGLETON $regexInput
-);
+use warnings;
 
 # This should always be $Rev: 1340 $ so that Foswiki can determine the checked-in
 # status of the plugin. It is used by the build automation tools, so
 # you should leave it alone.
-$VERSION = '$Rev: 1340 $';
+our $VERSION = '$Rev: 1340 $';
 
 # This is a free-form string you can use to "name" your own plugin version.
 # It is *not* used by the build automation tools, but is reported as part
 # of the version number in PLUGINDESCRIPTIONS.
-$RELEASE = '0.9';
+our $RELEASE = '0.9';
+
+# Short description of this plugin
+# # One line description, is shown in the %SYSTEMWEB%.TextFormattingRules topic:
+our $SHORTDESCRIPTION = 'Plugin to stop linking of WikiWords or force linking of non-standard Wikiwords';
 
 # You must set $NO_PREFS_IN_TOPIC to 0 if you want your plugin to use
 # preferences set in the plugin topic. This is required for compatibility
@@ -56,6 +53,18 @@ $RELEASE = '0.9';
 # %SYSTEMWEB%.DevelopingPlugins has details of how to define =$Foswiki::cfg=
 # entries so they can be used with =configure=.
 our $NO_PREFS_IN_TOPIC = 1;
+
+# Module variables used between functions within this module
+my $web;
+my $topic;
+my $user;
+my $installWeb;
+my $debug;
+
+my $stopWordsRE = '';  # Regex constructed from user input to stop linking
+my $dotSINGLETON = 0;  # Enable/Disable parameter for the .Singleton format
+my $regexInput = '';   # Regex parameters passed from $Foswiki::cfg
+
 
 # =========================
 sub initPlugin {
@@ -89,7 +98,7 @@ sub initPlugin {
         $stopWords =~ s/[^A-Za-z0-9\|]//go;
         $stopWordsRE = "(^|[\( \n\r\t\|])($stopWords)"
           ;               # WikiWord preceeded by space or parens
-        Foswiki::Func::writeDebug("- $pluginName stopWordsRE: $stopWordsRE")
+        Foswiki::Func::writeDebug("ControlWikiWordPlugin -  stopWordsRE: $stopWordsRE")
           if $debug;
     }
 

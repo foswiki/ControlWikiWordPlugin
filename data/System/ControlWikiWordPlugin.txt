@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="BaseUserMapping_333" comment="reprev" date="1263786249" format="1.1" reprev="1.2" version="1.2"}%
+%META:TOPICINFO{author="ProjectContributor" comment="reprev" date="1263786249" format="1.1" reprev="1.2" version="1.2"}%
 ---+!! !ControlWikiWordPlugin
 <!--
 One line description, required for extensions repository catalog.
@@ -18,6 +18,7 @@ This plugin provides 3 functions:
    * !Singleton WikiWord linking backwards compatible to the !SingletonWikiWordPlugin
    * Regular Expression rules-based Singleton WikiWord linking (Configurable only by system administrator)
 
+-----
 ---+++ Rules-based blocking of WikiWord linking
 
 In this mode, the Plugin prevents automatic linking of selected [[%SYSTEMWEB%.WikiWord][WikiWords]] such as <nop>LinuxWorld or <nop>MacDonald.
@@ -36,11 +37,12 @@ In this mode, the Plugin prevents automatic linking of selected [[%SYSTEMWEB%.Wi
    * Test if the installation was successful. The following words will not be linked in this topic. (The above setting needs to be copied to one of the preferences locations to activate for other webs or topics.): 
       * LinuxWorld, MacDonald
 
+-----
 ---+++ Singleton<nop>WikiWordPlugin compatible operation
 
 In this mode, the plugin will interpret that a single word is a reference to a Foswiki Topic of that name. To create a Singleton link, write a dot before the topic name. For example, if you have a topic named _Ontology_ you can link to it as _<nop><strong>.</strong>Ontology_ This adds a simpler way to force a single word link. You can already accomplish the same thing by enclosing the word in double square brackets, like this: <nop>[<nop>[Ontology]]
 
-The syntax was chosen to be an extension of the _Web.Topic_ syntax. The syntax does not topic names qualified with the web name. So to link to _Ontology_ in a different web than the current web, you need to use the square-bracket mode of forcing the links, [%NOP%[Support.Ontology][Support.Ontology]]
+The syntax was chosen to be an extension of the _Web.Topic_ syntax. The syntax does not support topic names qualified with the web name. So to link to _Ontology_ in a different web than the current web, you need to use the square-bracket mode of forcing the links, [%NOP%[Support.Ontology][Support.Ontology]]
 
 ---++++ Configuration
 
@@ -52,17 +54,17 @@ To enable backwards compatible operation with the TWiki !SingletonWikiWordPlugin
 
 ---++++ Examples
 
-Test:
-| *Written as* | *Test* | *If it is installed properly you see* | *If it isn't, you will see* |
-| .<nop>Singleword | .Singleword  | [[Singleword]] | <nop>.Singleword |
+| *As Written* | *Should appear as* | *If installed* | 
+| .<nop>Singleword | [[Singleword]]  | .Singleword | 
 
+-----
 ---+++ Regular Expression rules-based WikiWords
 
 This feature has no !WikiUser configurable features. The System Administrator can set regular expression rules in the Foswiki Configuration that will match topic names useful for your configuration. Examples might include bug tracking link on http://foswiki.org/Support, where question topics are the word _Question_ followed by a 3-5 digit number.
    * The sample configuration will provide a link for Question123 FAQ22, Item123 and Item1244, but not ATask123.  
       * But Task123A is matched as a normal WikiWord and not by this plugin.
-   * Forced links are not broken [[System.Question123][Forced link to Question123 in System Web]]
-   * And <a href=http://foswiki.org/Support/Question123> HTML Link to Question123 in Foswiki.org</a> are not broken
+   * Forced links containing a Singleton link in the link text are not broken:  [[System.Question123][Forced link to Question123 in System Web]]
+   * Neither are <a href=http://foswiki.org/Support/Question123> HTML Link to Question123 in Foswiki.org</a>
    * <noautolink> &lt;noautolink&gt; blocks are honored Question123 &lt;/noautolink&gt; </noautolink>
 
 ---++++ Configuration
@@ -73,7 +75,7 @@ The plugin performs case-sensitive matching.
 
 %X% *Caution:* Syntax errors in =LocalSite.cfg= can render the site non-operational.  This is an *Expert* level perl language configuration and should be approached with caution!
 
----+++++!! Example:
+---+++++!! Sample Configuration:
 <verbatim>
  {Plugins}{ControlWikiWordPlugin}{SingletonWords} = {
      '(?:Item[[:digit:]]{3,6})' => 'Tasks'
@@ -89,6 +91,13 @@ Will perform the following links:
    found.)
 </noautolink>
 
+---++++ Examples
+
+The following examples will function only if the sample configuration above
+has been set using the =bin/configure= interface by the systems administrator.
+Note that all links except for the last example will typically result in "missing
+topic" links with the "?".
+
 | *As Written* | *Should appear as* | *If Installed* | *Notes* | 
 | <nop>Item123 | [[Tasks.Item123][Item123]] | Item123 | Link points to Tasks Web |
 | <nop>Question234 | [[Support.Question123][Question234]] | Question234 | Link points to Support Web |
@@ -102,6 +111,7 @@ modifiers. The - "negates" or turns off the following options:
    * sm - The dot will match anything including newlines, while ^ and $ will match before or after embedded newlines within the string.
 -->
 
+-----
 ---++ Installation Instructions
 
 %$INSTALL_INSTRUCTIONS%
