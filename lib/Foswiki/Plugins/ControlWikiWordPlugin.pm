@@ -18,9 +18,9 @@
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details, published at 
+# GNU General Public License for more details, published at
 # http://www.gnu.org/copyleft/gpl.html
- 
+
 # =========================
 package Foswiki::Plugins::ControlWikiWordPlugin;    # change the package name!!!
 
@@ -30,9 +30,9 @@ use vars qw( $VERSION $RELEASE $debug $pluginName $stopWordsRE );
 
 # =========================
 use vars qw(
-        $web $topic $user $installWeb $VERSION $RELEASE $debug
-        $stopWordsRE $dotSINGLETON
-    );
+  $web $topic $user $installWeb $VERSION $RELEASE $debug
+  $stopWordsRE $dotSINGLETON
+);
 
 # This should always be $Rev: 1340 $ so that Foswiki can determine the checked-in
 # status of the plugin. It is used by the build automation tools, so
@@ -58,52 +58,58 @@ $RELEASE = '0.9';
 our $NO_PREFS_IN_TOPIC = 1;
 
 # =========================
-sub initPlugin
-{
+sub initPlugin {
     ( $topic, $web, $user, $installWeb ) = @_;
 
     # check for Plugins.pm versions
-    if( $Foswiki::Plugins::VERSION < 2 ) {
-        &Foswiki::Func::writeWarning( "Version mismatch between ControlWikiWordPlugin and Plugins.pm" );
+    if ( $Foswiki::Plugins::VERSION < 2 ) {
+        &Foswiki::Func::writeWarning(
+            "Version mismatch between ControlWikiWordPlugin and Plugins.pm");
         return 0;
     }
 
     # Get plugin debug flag
-    $debug = &Foswiki::Func::getPreferencesFlag( "CONTROLWIKIWORDPLUGIN_DEBUG" );
+    $debug = &Foswiki::Func::getPreferencesFlag("CONTROLWIKIWORDPLUGIN_DEBUG");
 
-    my $stopWords = Foswiki::Func::getPreferencesValue( "STOPWIKIWORDLINK" )
-                 || Foswiki::Func::getPreferencesValue( "CONTROLWIKIWORDPLUGIN_STOPWIKIWORDLINK" )
-                 || Foswiki::Func::getPreferencesValue( "STOPWIKIWORDLINKPLUGIN_STOPWIKIWORDLINK" )
-                 || '';
+    my $stopWords = Foswiki::Func::getPreferencesValue("STOPWIKIWORDLINK")
+      || Foswiki::Func::getPreferencesValue(
+        "CONTROLWIKIWORDPLUGIN_STOPWIKIWORDLINK")
+      || Foswiki::Func::getPreferencesValue(
+        "STOPWIKIWORDLINKPLUGIN_STOPWIKIWORDLINK")
+      || '';
 
-    $stopWordsRE = '';         # Clear - handler only processes topic if provided
+    $stopWordsRE = '';    # Clear - handler only processes topic if provided
 
     if ($stopWords) {
-       # build regularex:
-       $stopWords =~ s/\, */\|/go;
-       $stopWords =~ s/^ *//o;
-       $stopWords =~ s/ *$//o;
-       $stopWords =~ s/[^A-Za-z0-9\|]//go;
-       $stopWordsRE = "(^|[\( \n\r\t\|])($stopWords)"; # WikiWord preceeded by space or parens
-       Foswiki::Func::writeDebug( "- $pluginName stopWordsRE: $stopWordsRE" ) if $debug;
+
+        # build regularex:
+        $stopWords =~ s/\, */\|/go;
+        $stopWords =~ s/^ *//o;
+        $stopWords =~ s/ *$//o;
+        $stopWords =~ s/[^A-Za-z0-9\|]//go;
+        $stopWordsRE = "(^|[\( \n\r\t\|])($stopWords)"
+          ;               # WikiWord preceeded by space or parens
+        Foswiki::Func::writeDebug("- $pluginName stopWordsRE: $stopWordsRE")
+          if $debug;
     }
 
-    $dotSINGLETON = Foswiki::Func::getPreferencesValue( "CONTROLWIKIWORDPLUGIN_DOTSINGLETONENABLE" );
-
+    $dotSINGLETON = Foswiki::Func::getPreferencesValue(
+        "CONTROLWIKIWORDPLUGIN_DOTSINGLETONENABLE");
 
     # Plugin correctly initialized
-    Foswiki::Func::writeDebug( "- Foswiki::Plugins::ControlWikiWordPlugin::initPlugin( $web.$topic ) is OK" );
+    Foswiki::Func::writeDebug(
+"- Foswiki::Plugins::ControlWikiWordPlugin::initPlugin( $web.$topic ) is OK"
+    );
     return 1;
 }
 
-
-sub writeDebug 
-{
-   &Foswiki::Func::writeDebug (@_) if $debug;
+sub writeDebug {
+    &Foswiki::Func::writeDebug(@_) if $debug;
 }
 
 #===========================================================================
 sub preRenderingHandler {
+
     # do not uncomment, use $_[0], $_[1]... instead
     #my( $text, $pMap ) = @_;
 
@@ -113,47 +119,68 @@ sub preRenderingHandler {
 
     $_[0] =~ s/$stopWordsRE/$1<nop>$2/g if ($stopWordsRE);
 
-    my $regexInput = $Foswiki::cfg{Plugins}{ControlWikiWordPlugin}{SingletonWords} || {};
+    my $regexInput =
+      $Foswiki::cfg{Plugins}{ControlWikiWordPlugin}{SingletonWords} || {};
 
+    # If we don't have any regex and don't want the dot format, forget it.
+    if ( scalar keys %$regexInput > 0 || $dotSINGLETON ) {
 
-    # Don't bother at all if NOAUTOLINK is requested for the topic.
-    unless ( Foswiki::Func::getPreferencesFlag('NOAUTOLINK') ) {
+        # Don't bother at all if NOAUTOLINK is requested for the topic.
+        unless ( Foswiki::Func::getPreferencesFlag('NOAUTOLINK') ) {
 
-        # Determine which release of Foswiki in use - R1.1 moved takeOUtBlocks into Foswiki proper
-        # SMELL: Directly calling Foswiki and Render functions is not recommended.
-        # This needs to be validated for any major changes in Foswiki.   Tested on 1.0.9 and 1.1.0 trunk
-        #
-        eval ('$renderer->takeOutBlocks');
-        #Foswiki::Func::writeDebug( "Eval returned $@" );
-        my $tOB = $@;    # If $tOB contains an error, then it failed, so use the Foswiki 1.1+ version
+# Determine which release of Foswiki in use - R1.1 moved takeOUtBlocks into Foswiki proper
+# SMELL: Directly calling Foswiki and Render functions is not recommended.
+# This needs to be validated for any major changes in Foswiki.   Tested on 1.0.9 and 1.1.0 trunk
+#
+            eval('$renderer->takeOutBlocks');
 
-        # Remove any <noautolink> blocks from the topic
-        if ($tOB) {
-            $_[0] = Foswiki::takeOutBlocks( $_[0], 'noautolink', $removedTextareas );
-        } else {
-            $_[0] = $renderer->takeOutBlocks( $_[0], 'noautolink', $removedTextareas );
+            #Foswiki::Func::writeDebug( "Eval returned $@" );
+            my $tOB = $@
+              ; # If $tOB contains an error, then it failed, so use the Foswiki 1.1+ version
+
+            # Remove any <noautolink> blocks from the topic
+            if ($tOB) {
+                $_[0] =
+                  Foswiki::takeOutBlocks( $_[0], 'noautolink',
+                    $removedTextareas );
+            }
+            else {
+                $_[0] =
+                  $renderer->takeOutBlocks( $_[0], 'noautolink',
+                    $removedTextareas );
+            }
+
+            # Also remove any forced links from the topic.
+            $_[0] =
+              $renderer->_takeOutProtected( $_[0], qr/\[\[(?:.*?)\]\]/si,
+                'wikilink', $removedProtected );
+            $_[0] = $renderer->_takeOutProtected(
+                $_[0],      qr/<a\s(?:.*?)<\/a>/si,
+                'htmllink', $removedProtected
+            );
+
+            foreach my $regex ( keys(%$regexInput) ) {
+                my $linkWeb = $regexInput->{$regex} || $web;
+                Foswiki::Func::writeDebug(" Regex is $regex Web is $linkWeb  ");
+                $_[0] =~ s/(\s)($regex)\b/$1."[[$linkWeb.$2][$2]]"/ge;
+            }
+            $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1"."[[$web.$2][$2]]"/geo
+              if ($dotSINGLETON);
+
+            # put back everything that was removed
+            if ($tOB) {
+                Foswiki::putBackBlocks( \$_[0], $removedTextareas, 'noautolink',
+                    'noautolink' );
+            }
+            else {
+                $renderer->putBackBlocks( \$_[0], $removedTextareas,
+                    'noautolink', 'noautolink' );
+            }
+            $renderer->_putBackProtected( \$_[0], 'wikilink',
+                $removedProtected );
+            $renderer->_putBackProtected( \$_[0], 'htmllink',
+                $removedProtected );
         }
-        # Also remove any forced links from the topic.
-        $_[0] = $renderer->_takeOutProtected( $_[0], qr/\[\[(?:.*?)\]\]/si, 'wikilink', $removedProtected );
-        $_[0] = $renderer->_takeOutProtected( $_[0], qr/<a\s(?:.*?)<\/a>/si, 'htmllink', $removedProtected );
-
-           #my $regex = qr/Question[[:digit:]]{3,5}|Task[[:digit:]]{3,5}/;
-
-       foreach my $regex ( keys(%$regexInput) ) {
-           my $linkWeb = $regexInput->{$regex} || $web;
-           Foswiki::Func::writeDebug(" Regex is $regex Web is $linkWeb  "); 
-           $_[0] =~ s/(\s)($regex)\b/$1."[[$linkWeb.$2][$2]]"/ge;
-        }
-        $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1"."[[$web.$2][$2]]"/geo if ($dotSINGLETON);
-   
-        # put back everything that was removed
-        if ($tOB) {
-            Foswiki::putBackBlocks( \$_[0], $removedTextareas, 'noautolink', 'noautolink' );
-        } else {
-            $renderer->putBackBlocks( \$_[0], $removedTextareas, 'noautolink', 'noautolink' );
-        }
-        $renderer->_putBackProtected( \$_[0], 'wikilink',  $removedProtected );
-        $renderer->_putBackProtected( \$_[0], 'htmllink',  $removedProtected );
     }
 
 }

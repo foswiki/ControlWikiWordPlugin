@@ -59,7 +59,8 @@ Test:
 ---+++ Regular Expression rules-based WikiWords
 
 This feature has no !WikiUser configurable features. The System Administrator can set regular expression rules in the Foswiki Configuration that will match topic names useful for your configuration. Examples might include bug tracking link on http://foswiki.org/Support, where question topics are the word _Question_ followed by a 3-5 digit number.
-   * The sample configuration will provide a link for Question123 FAQ22, Item123 and Item1244, but not ATask123.  (Task123A is matched as a normal WikiWord and not by this plugin.)
+   * The sample configuration will provide a link for Question123 FAQ22, Item123 and Item1244, but not ATask123.  
+      * But Task123A is matched as a normal WikiWord and not by this plugin.
    * Forced links are not broken [[System.Question123][Forced link to Question123 in System Web]]
    * And <a href=http://foswiki.org/Support/Question123> HTML Link to Question123 in Foswiki.org</a> are not broken
    * <noautolink> &lt;noautolink&gt; blocks are honored Question123 &lt;/noautolink&gt; </noautolink>
