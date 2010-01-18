@@ -71,7 +71,7 @@ The system administrator uses the =bin/configure= interface to set one or more R
 should be linked. ={qr/Regular Expression/,'Webname'}= If the webname is not provided, the link will be for the web of the topic containing the matching word.
 The plugin performs case-sensitive matching.  
 
-%X% *Caution:* Syntax errors in =LocalSite.cfg= can render the site non-operational.  This is a *Expert* level perl language configuration and should be approached with caution!
+%X% *Caution:* Syntax errors in =LocalSite.cfg= can render the site non-operational.  This is an *Expert* level perl language configuration and should be approached with caution!
 
 ---+++++!! Example:
 <verbatim>

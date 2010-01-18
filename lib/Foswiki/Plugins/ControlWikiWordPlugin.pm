@@ -31,7 +31,7 @@ use vars qw( $VERSION $RELEASE $debug $pluginName $stopWordsRE );
 # =========================
 use vars qw(
   $web $topic $user $installWeb $VERSION $RELEASE $debug
-  $stopWordsRE $dotSINGLETON
+  $stopWordsRE $dotSINGLETON $regexInput
 );
 
 # This should always be $Rev: 1340 $ so that Foswiki can determine the checked-in
@@ -96,15 +96,14 @@ sub initPlugin {
     $dotSINGLETON = Foswiki::Func::getPreferencesValue(
         "CONTROLWIKIWORDPLUGIN_DOTSINGLETONENABLE");
 
+    $regexInput = $Foswiki::cfg{Plugins}{ControlWikiWordPlugin}{SingletonWords}
+      || {};
+
     # Plugin correctly initialized
     Foswiki::Func::writeDebug(
 "- Foswiki::Plugins::ControlWikiWordPlugin::initPlugin( $web.$topic ) is OK"
-    );
+    ) if $debug;
     return 1;
-}
-
-sub writeDebug {
-    &Foswiki::Func::writeDebug(@_) if $debug;
 }
 
 #===========================================================================
@@ -119,22 +118,18 @@ sub preRenderingHandler {
 
     $_[0] =~ s/$stopWordsRE/$1<nop>$2/g if ($stopWordsRE);
 
-    my $regexInput =
-      $Foswiki::cfg{Plugins}{ControlWikiWordPlugin}{SingletonWords} || {};
-
     # If we don't have any regex and don't want the dot format, forget it.
     if ( scalar keys %$regexInput > 0 || $dotSINGLETON ) {
 
         # Don't bother at all if NOAUTOLINK is requested for the topic.
         unless ( Foswiki::Func::getPreferencesFlag('NOAUTOLINK') ) {
 
-# Determine which release of Foswiki in use - R1.1 moved takeOUtBlocks into Foswiki proper
 # SMELL: Directly calling Foswiki and Render functions is not recommended.
 # This needs to be validated for any major changes in Foswiki.   Tested on 1.0.9 and 1.1.0 trunk
-#
+# Determine which release of Foswiki in use - R1.1 moved takeOUtBlocks into Foswiki proper
+
             eval('$renderer->takeOutBlocks');
 
-            #Foswiki::Func::writeDebug( "Eval returned $@" );
             my $tOB = $@
               ; # If $tOB contains an error, then it failed, so use the Foswiki 1.1+ version
 
@@ -161,7 +156,8 @@ sub preRenderingHandler {
 
             foreach my $regex ( keys(%$regexInput) ) {
                 my $linkWeb = $regexInput->{$regex} || $web;
-                Foswiki::Func::writeDebug(" Regex is $regex Web is $linkWeb  ");
+                Foswiki::Func::writeDebug(" Regex is $regex Web is $linkWeb  ")
+                  if $debug;
                 $_[0] =~ s/(\s)($regex)\b/$1."[[$linkWeb.$2][$2]]"/ge;
             }
             $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1"."[[$web.$2][$2]]"/geo
