@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="BaseUserMapping_333" date="1263766997" format="1.1" reprev="1.3" version="1.3"}%
+%META:TOPICINFO{author="BaseUserMapping_333" comment="reprev" date="1263786249" format="1.1" reprev="1.2" version="1.2"}%
 ---+!! !ControlWikiWordPlugin
 <!--
 One line description, required for extensions repository catalog.
@@ -14,27 +14,9 @@ prefer.
 ---++ Usage
 
 This plugin provides 3 functions:
-   * Regular Expression rules-based Singleton WikiWord linking (Configurable only by system administrator)
    * Rules-based blocking of WikiWord linking backwards compatible to the !StopWikiWordPlugin (Configurable by any user)
    * !Singleton WikiWord linking backwards compatible to the !SingletonWikiWordPlugin
-
----+++ Regular Expression rules-based WikiWords
-
-This feature has no !WikiUser configurable features. The System Administrator can set regular expression rules in the Foswiki Configuration that will match topic names useful for your configuration. Examples might include bug tracking link on http://foswiki.org/Support, where question topics are the word _Question_ followed by a 3-5 digit number.
-   * The sample configuration will provide a link for Question123
-   * Forced links are not broken [[System.Question123][Forced link to Question123 in System Web]]
-   * And <a href=http://foswiki.org/Support/Question123> HTML Link to Question123 in Foswiki.org</a> are not broken
-
-<noautolink> &lt;noautolink&gt; sections are honored Question456 &lt;/noautolink&gt; </noautolink>
----++++ Configuration
-
-The system administrator uses the =bin/configure= interface to set one or more Regular Expressions to find Singleton !WikiWords that should be converted to links. The configuration is a list of pairs - a Regular Expression, and the web that should be linked. For example, the following configuration will link any occurrence of =Question= followed by a 3-5 digit number, such as =Question123= to the link =[%NOP%[Support.Question123]]=
-
-<verbatim>
-  {ControlWikiWordPlugin}{SingletonWords} = "Question[[:digit:]]{3,5}","Support"
-</verbatim>
-
-If the Web portion of the rule is empty, the link will point to the current web where the Singleton !WikiWord was found.
+   * Regular Expression rules-based Singleton WikiWord linking (Configurable only by system administrator)
 
 ---+++ Rules-based blocking of WikiWord linking
 
@@ -56,19 +38,13 @@ In this mode, the Plugin prevents automatic linking of selected [[%SYSTEMWEB%.Wi
 
 ---+++ Singleton<nop>WikiWordPlugin compatible operation
 
-This designates that a single word is a reference to a single word. To show Foswiki that it should be linked to, write a dot before it.
+In this mode, the plugin will interpret that a single word is a reference to a Foswiki Topic of that name. To create a Singleton link, write a dot before the topic name. For example, if you have a topic named _Ontology_ you can link to it as _<nop><strong>.</strong>Ontology_ This adds a simpler way to force a single word link. You can already accomplish the same thing by enclosing the word in double square brackets, like this: <nop>[<nop>[Ontology]]
 
-Hence if you have the WikiWord Ontology you can link to it as <nop>.Ontology
-
-In fact, you can already force a single word link to a WikiWord by enclosing it in double square brackets, like this: <nop>[<nop>[Ontology]]
-
-This plugin allows you to write it without the square brackets.
-
-The syntax was chosen to be an extension of the Web.Topic syntax
+The syntax was chosen to be an extension of the _Web.Topic_ syntax. The syntax does not topic names qualified with the web name. So to link to _Ontology_ in a different web than the current web, you need to use the square-bracket mode of forcing the links, [%NOP%[Support.Ontology][Support.Ontology]]
 
 ---++++ Configuration
 
-To enable backwards compatible operation with the TWiki !SingletonWikiWordPlugin, Add the CONTROLWIKIWORDPLUGIN_DOTSINGLETONENABLE setting to the [[%LOCALSITEPREFS%]] topic or in any web in %WEBPREFSTOPIC%, or in user or individual topics.
+To enable backwards compatible operation with the TWiki !SingletonWikiWordPlugin, Add the CONTROLWIKIWORDPLUGIN_DOTSINGLETONENABLE setting to the [[%LOCALSITEPREFS%]] topic or in any web in %WEBPREFSTOPIC%, or in user or individual topics. This mode of operation is not enabled by default.
 
 <verbatim>  
    * Set CONTROLWIKIWORDPLUGIN_DOTSINGLETONENABLE = 1
@@ -80,17 +56,59 @@ Test:
 | *Written as* | *Test* | *If it is installed properly you see* | *If it isn't, you will see* |
 | .<nop>Singleword | .Singleword  | [[Singleword]] | <nop>.Singleword |
 
+---+++ Regular Expression rules-based WikiWords
+
+This feature has no !WikiUser configurable features. The System Administrator can set regular expression rules in the Foswiki Configuration that will match topic names useful for your configuration. Examples might include bug tracking link on http://foswiki.org/Support, where question topics are the word _Question_ followed by a 3-5 digit number.
+   * The sample configuration will provide a link for Question123 FAQ22, Item123 and Item1244, but not ATask123.  (Task123A is matched as a normal WikiWord and not by this plugin.)
+   * Forced links are not broken [[System.Question123][Forced link to Question123 in System Web]]
+   * And <a href=http://foswiki.org/Support/Question123> HTML Link to Question123 in Foswiki.org</a> are not broken
+   * <noautolink> &lt;noautolink&gt; blocks are honored Question123 &lt;/noautolink&gt; </noautolink>
+
+---++++ Configuration
+
+The system administrator uses the =bin/configure= interface to set one or more Regular Expressions to find Singleton !WikiWords that should be converted to links. The configuration is a hash of a Regular Expression, and the web that
+should be linked. ={qr/Regular Expression/,'Webname'}= If the webname is not provided, the link will be for the web of the topic containing the matching word.
+The plugin performs case-sensitive matching.  
+
+%X% *Caution:* Syntax errors in =LocalSite.cfg= can render the site non-operational.  This is a *Expert* level perl language configuration and should be approached with caution!
+
+---+++++!! Example:
+<verbatim>
+ {Plugins}{ControlWikiWordPlugin}{SingletonWords} = {
+     '(?:Item[[:digit:]]{3,6})' => 'Tasks'
+     '(?:Question[[:digit:]]{3,5}|FAQ[[:digit:]]{1,3})' => 'Support'
+     '(?:Plugins)' => ''
+     }; 
+</verbatim>
+Will perform the following links:
+<noautolink>
+   $ =='(?:Item[%NOP%[:digit:]]{3,6}) => 'Tasks'==: Match the word _Item_ followed by a 3-6 digit number.  If found, create a link to the topic of that name in the Tasks web.
+   $ =='(?:Question[%NOP%[:digit:]]{3,5}|FAQ[%NOP%[:digit:]]{1,3}) => 'Support'==: Match either _Question_, followed by a 3-5 digit number, or _FAQ_ followed by a 1-3 digit number.  If found create a link to the topic of that name in the Support web.
+   $ =='(?:Plugins)' => ''==: Link any instance of the word _Plugins_ to a topic of that name in the current web.  (If the Web portion of the rule is empty, the link will point to the current web where the Singleton !WikiWord was
+   found.)
+</noautolink>
+
+| *As Written* | *Should appear as* | *If Installed* | *Notes* | 
+| <nop>Item123 | [[Tasks.Item123][Item123]] | Item123 | Link points to Tasks Web |
+| <nop>Question234 | [[Support.Question123][Question234]] | Question234 | Link points to Support Web |
+| <nop>FAQ23 | [[Support.FAQ23][FAQ23]] | FAQ23 | Link points to Support Web |
+| <nop>Plugins | [[Plugins]] | Plugins | Links to Plugins topic in System Web |
+<!--
+The =(?-xism= string means as follows:   =(?-= A grouping of characters, with
+modifiers. The - "negates" or turns off the following options:
+   * x - Extended (non-matching) white space in the expression
+   * i - Case insensitive, so -i means case sensitive.
+   * sm - The dot will match anything including newlines, while ^ and $ will match before or after embedded newlines within the string.
+-->
+
 ---++ Installation Instructions
 
 %$INSTALL_INSTRUCTIONS%
 
 ---++ Info
 
-Many thanks to the following sponsors for supporting this work:
-   * Acknowledge any sponsors here
-
 |  Author(s): | Foswiki:Main/GeorgeClark |
-|  Copyright: | © George Clark. Adapted from code Copyright: <br /> Copyright (C) 2000-2001 Andrea Sterbini, a.sterbini@flashnet.it <br /> Copyright (C) 2001, 2006 Peter Thoeny, Peter@Thoeny.com |
+|  Copyright: | © 2010 George Clark. Adapted from code: <br />Copyright (C) 2000-2001 Andrea Sterbini, a.sterbini@flashnet.it <br /> Copyright (C) 2001, 2006 Peter Thoeny, Peter@Thoeny.com |
 |  License: | [[http://www.gnu.org/licenses/gpl.html][GPL (Gnu General Public License)]] |
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |

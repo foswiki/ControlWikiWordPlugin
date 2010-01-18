@@ -113,6 +113,8 @@ sub preRenderingHandler {
 
     $_[0] =~ s/$stopWordsRE/$1<nop>$2/g if ($stopWordsRE);
 
+    my $regexInput = $Foswiki::cfg{Plugins}{ControlWikiWordPlugin}{SingletonWords} || {};
+
 
     # Don't bother at all if NOAUTOLINK is requested for the topic.
     unless ( Foswiki::Func::getPreferencesFlag('NOAUTOLINK') ) {
@@ -131,12 +133,17 @@ sub preRenderingHandler {
         } else {
             $_[0] = $renderer->takeOutBlocks( $_[0], 'noautolink', $removedTextareas );
         }
-
         # Also remove any forced links from the topic.
         $_[0] = $renderer->_takeOutProtected( $_[0], qr/\[\[(?:.*?)\]\]/si, 'wikilink', $removedProtected );
         $_[0] = $renderer->_takeOutProtected( $_[0], qr/<a\s(?:.*?)<\/a>/si, 'htmllink', $removedProtected );
 
-        $_[0] =~ s/(\s+)(Question[[:digit:]]{3,5})(\s+)/"$1"."[[$web.$2][$2]]".$3/geo;
+           #my $regex = qr/Question[[:digit:]]{3,5}|Task[[:digit:]]{3,5}/;
+
+       foreach my $regex ( keys(%$regexInput) ) {
+           my $linkWeb = $regexInput->{$regex} || $web;
+           Foswiki::Func::writeDebug(" Regex is $regex Web is $linkWeb  "); 
+           $_[0] =~ s/(\s)($regex)\b/$1."[[$linkWeb.$2][$2]]"/ge;
+        }
         $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1"."[[$web.$2][$2]]"/geo if ($dotSINGLETON);
    
         # put back everything that was removed
