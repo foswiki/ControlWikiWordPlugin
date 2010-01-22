@@ -39,7 +39,8 @@ our $RELEASE = '0.9';
 
 # Short description of this plugin
 # # One line description, is shown in the %SYSTEMWEB%.TextFormattingRules topic:
-our $SHORTDESCRIPTION = 'Plugin to stop linking of WikiWords or force linking of non-standard Wikiwords';
+our $SHORTDESCRIPTION =
+'Plugin to stop linking of WikiWords or force linking of non-standard Wikiwords';
 
 # You must set $NO_PREFS_IN_TOPIC to 0 if you want your plugin to use
 # preferences set in the plugin topic. This is required for compatibility
@@ -61,10 +62,9 @@ my $user;
 my $installWeb;
 my $debug;
 
-my $stopWordsRE = '';  # Regex constructed from user input to stop linking
-my $dotSINGLETON = 0;  # Enable/Disable parameter for the .Singleton format
-my $regexInput = '';   # Regex parameters passed from $Foswiki::cfg
-
+my $stopWordsRE  = '';    # Regex constructed from user input to stop linking
+my $dotSINGLETON = 0;     # Enable/Disable parameter for the .Singleton format
+my $regexInput   = '';    # Regex parameters passed from $Foswiki::cfg
 
 # =========================
 sub initPlugin {
@@ -98,12 +98,14 @@ sub initPlugin {
         $stopWords =~ s/[^A-Za-z0-9\|]//go;
         $stopWordsRE = "(^|[\( \n\r\t\|])($stopWords)"
           ;               # WikiWord preceeded by space or parens
-        Foswiki::Func::writeDebug("ControlWikiWordPlugin -  stopWordsRE: $stopWordsRE")
+        Foswiki::Func::writeDebug(
+            "ControlWikiWordPlugin -  stopWordsRE: $stopWordsRE")
           if $debug;
     }
 
     $dotSINGLETON = Foswiki::Func::getPreferencesValue(
-        "CONTROLWIKIWORDPLUGIN_DOTSINGLETONENABLE") || '' ;
+        "CONTROLWIKIWORDPLUGIN_DOTSINGLETONENABLE")
+      || '';
 
     $regexInput = $Foswiki::cfg{Plugins}{ControlWikiWordPlugin}{SingletonWords}
       || {};
@@ -138,9 +140,13 @@ sub preRenderingHandler {
 # Determine which release of Foswiki in use - R1.1 moved takeOUtBlocks into Foswiki proper
 
             # Remove any <noautolink> blocks from the topic
-            eval('$renderer->takeOutBlocks( $_[0], \'noautolink\', $removedTextareas )');
+            eval(
+'$renderer->takeOutBlocks( $_[0], \'noautolink\', $removedTextareas )'
+            );
             if ( $@ ne "" ) {
-                $_[0] = Foswiki::takeOutBlocks( $_[0], 'noautolink', $removedTextareas );
+                $_[0] =
+                  Foswiki::takeOutBlocks( $_[0], 'noautolink',
+                    $removedTextareas );
             }
 
             # Also remove any forced links from the topic.
@@ -158,7 +164,7 @@ sub preRenderingHandler {
                   if $debug;
                 $_[0] =~ s/(\s)($regex)\b/$1."[[$linkWeb.$2][$2]]"/ge;
             }
-            $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1"."[[$web.$2][$2]]"/geo 
+            $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1"."[[$web.$2][$2]]"/geo
               if ($dotSINGLETON);
 
             # put back everything that was removed
