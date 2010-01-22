@@ -129,3 +129,13 @@ modifiers. The - "negates" or turns off the following options:
 |  Support: | http://foswiki.org/bin/view/Support/ControlWikiWordPlugin |
 
 <!-- Do _not_ attempt to edit this topic; it is auto-generated. -->
+
+
+%META:FORM{name="PackageForm"}%
+%META:FIELD{name="ExtensionClassification" attributes="" %title="ExtensionClassification" value="Interface and Visualisation"}%
+%META:FIELD{name="ExtensionType" attributes="" title="ExtensionType" value="PluginPackage"}%
+%META:FIELD{name="Compatibility" attributes="" title="[[Compatibility]]" value="Should run with: All Foswiki versions."}%
+%META:FIELD{name="DemoUrl" attributes="" title="DemoUrl" value=""}%
+%META:FIELD{name="SupportUrl" attributes="" title="SupportUrl" value="Support.ControlWikiWordPlutin"}%
+%META:FIELD{name="DevelopedInSVN" attributes="" title="DevelopedInSVN" value="Yes"}%
+%META:FIELD{name="ModificationPolicy" attributes="" title="ModificationPolicy" value="PleaseFeelFreeToModify"}%
