@@ -103,7 +103,7 @@ sub initPlugin {
     }
 
     $dotSINGLETON = Foswiki::Func::getPreferencesValue(
-        "CONTROLWIKIWORDPLUGIN_DOTSINGLETONENABLE");
+        "CONTROLWIKIWORDPLUGIN_DOTSINGLETONENABLE") || '' ;
 
     $regexInput = $Foswiki::cfg{Plugins}{ControlWikiWordPlugin}{SingletonWords}
       || {};
@@ -121,7 +121,7 @@ sub preRenderingHandler {
     # do not uncomment, use $_[0], $_[1]... instead
     #my( $text, $pMap ) = @_;
 
-    my $renderer         = $Foswiki::Plugins::SESSION->{renderer};
+    my $renderer         = $Foswiki::Plugins::SESSION->renderer();
     my $removedTextareas = {};
     my $removedProtected = {};
 
@@ -137,21 +137,10 @@ sub preRenderingHandler {
 # This needs to be validated for any major changes in Foswiki.   Tested on 1.0.9 and 1.1.0 trunk
 # Determine which release of Foswiki in use - R1.1 moved takeOUtBlocks into Foswiki proper
 
-            eval('$renderer->takeOutBlocks');
-
-            my $tOB = $@
-              ; # If $tOB contains an error, then it failed, so use the Foswiki 1.1+ version
-
             # Remove any <noautolink> blocks from the topic
-            if ($tOB) {
-                $_[0] =
-                  Foswiki::takeOutBlocks( $_[0], 'noautolink',
-                    $removedTextareas );
-            }
-            else {
-                $_[0] =
-                  $renderer->takeOutBlocks( $_[0], 'noautolink',
-                    $removedTextareas );
+            eval('$renderer->takeOutBlocks( $_[0], \'noautolink\', $removedTextareas )');
+            if ( $@ ne "" ) {
+                $_[0] = Foswiki::takeOutBlocks( $_[0], 'noautolink', $removedTextareas );
             }
 
             # Also remove any forced links from the topic.
@@ -169,11 +158,11 @@ sub preRenderingHandler {
                   if $debug;
                 $_[0] =~ s/(\s)($regex)\b/$1."[[$linkWeb.$2][$2]]"/ge;
             }
-            $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1"."[[$web.$2][$2]]"/geo
+            $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1"."[[$web.$2][$2]]"/geo 
               if ($dotSINGLETON);
 
             # put back everything that was removed
-            if ($tOB) {
+            if ($@) {
                 Foswiki::putBackBlocks( \$_[0], $removedTextareas, 'noautolink',
                     'noautolink' );
             }
