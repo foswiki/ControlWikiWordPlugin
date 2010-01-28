@@ -9,14 +9,17 @@ prefer.
 --> 
 %SHORTDESCRIPTION%
 
-%TOC%
+%TOC{depth="3"}%
 
 ---++ Usage
 
-This plugin provides 3 functions:
-   * Rules-based blocking of WikiWord linking backwards compatible to the !StopWikiWordPlugin (Configurable by any user)
+This plugin provides 4 functions:
+   * Rules-based blocking of WikiWord linking backwards compatible to the !StopWikiWordPlugin 
+   * Limit linking of Acronyms to the first instance in a topic.
    * !Singleton WikiWord linking backwards compatible to the !SingletonWikiWordPlugin
    * Regular Expression rules-based Singleton WikiWord linking (Configurable only by system administrator)
+
+All functions are disabled by default unless explicitly enabled.
 
 -----
 ---+++ Rules-based blocking of WikiWord linking
@@ -38,6 +41,33 @@ In this mode, the Plugin prevents automatic linking of selected [[%SYSTEMWEB%.Wi
       * LinuxWorld, MacDonald
 
 -----
+---+++ Acronym Linking Control
+
+In addition to WikiWords, Foswiki will auto-link Acronyms - any string
+consisting of 3 or more upper-case letters and numbers. WikiWords are always
+linked - displaying a question mark if the topic does not exist.  Acronyms
+however only link when the topic exists.
+
+In some technical
+topics, this can result in excessive linking.  This feature will limit
+acronym links to only the first occurrence of an acronym in a topic.  Forced
+[<nop>[link]]  however will always be honored. 
+
+---++++ Configuration
+
+To limit Acronym linking, add the CONTROLWIKIWORDPLUGIN_LIMITACRONYMS setting
+to the [[%LOCALSITEPREFS%]] topic or in any web in %WEBPREFSTOPIC%, or in user
+or individual topics. This mode of operation is not enabled by default.  (This
+setting can be abbreviated as simply =LIMITACRONYMS=.)
+
+<verbatim>  
+   * Set CONTROLWIKIWORDPLUGIN_LIMITACRONYMS = 1
+</verbatim>
+
+---++++ Examples
+HTML is an example of an ACRONYM, as is RSS.   If an ACRONYM occurs twice, only
+the first instance will be linked.  
+
 ---+++ Singleton<nop>WikiWordPlugin compatible operation
 
 In this mode, the plugin will interpret that a single word is a reference to a Foswiki Topic of that name. To create a Singleton link, write a dot before the topic name. For example, if you have a topic named _Ontology_ you can link to it as _<nop><strong>.</strong>Ontology_ This adds a simpler way to force a single word link. You can already accomplish the same thing by enclosing the word in double square brackets, like this: <nop>[<nop>[Ontology]]
@@ -45,7 +75,6 @@ In this mode, the plugin will interpret that a single word is a reference to a F
 The syntax was chosen to be an extension of the _Web.Topic_ syntax. The syntax does not support topic names qualified with the web name. So to link to _Ontology_ in a different web than the current web, you need to use the square-bracket mode of forcing the links, [%NOP%[Support.Ontology][Support.Ontology]]
 
 ---++++ Configuration
-
 To enable backwards compatible operation with the TWiki !SingletonWikiWordPlugin, Add the CONTROLWIKIWORDPLUGIN_DOTSINGLETONENABLE setting to the [[%LOCALSITEPREFS%]] topic or in any web in %WEBPREFSTOPIC%, or in user or individual topics. This mode of operation is not enabled by default.
 
 <verbatim>  
@@ -129,13 +158,3 @@ modifiers. The - "negates" or turns off the following options:
 |  Support: | http://foswiki.org/bin/view/Support/ControlWikiWordPlugin |
 
 <!-- Do _not_ attempt to edit this topic; it is auto-generated. -->
-
-
-%META:FORM{name="PackageForm"}%
-%META:FIELD{name="ExtensionClassification" attributes="" %title="ExtensionClassification" value="Interface and Visualisation"}%
-%META:FIELD{name="ExtensionType" attributes="" title="ExtensionType" value="PluginPackage"}%
-%META:FIELD{name="Compatibility" attributes="" title="[[Compatibility]]" value="Should run with: All Foswiki versions."}%
-%META:FIELD{name="DemoUrl" attributes="" title="DemoUrl" value=""}%
-%META:FIELD{name="SupportUrl" attributes="" title="SupportUrl" value="Support.ControlWikiWordPlutin"}%
-%META:FIELD{name="DevelopedInSVN" attributes="" title="DevelopedInSVN" value="Yes"}%
-%META:FIELD{name="ModificationPolicy" attributes="" title="ModificationPolicy" value="PleaseFeelFreeToModify"}%

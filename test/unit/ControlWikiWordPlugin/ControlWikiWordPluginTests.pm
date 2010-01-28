@@ -74,7 +74,8 @@ sub doTest {
 
     Foswiki::Plugins::ControlWikiWordPlugin::initPlugin( "TestTopic",
         $this->{test_web}, "MyUser", "System" );
-    Foswiki::Plugins::ControlWikiWordPlugin::preRenderingHandler($source);
+    Foswiki::Plugins::ControlWikiWordPlugin::preRenderingHandler( $source,
+        $this->{test_web} );
 
     #print " RENDERED = $source \n";
     if ($assertFalse) {
@@ -257,7 +258,7 @@ END_EXPECTED
 }
 
 # ########################################################
-# Verify that WikiWords are blocked
+# Verify that rules based wikiwords are linked
 # ########################################################
 
 sub test_RulesBasedWikiWords {
@@ -273,10 +274,12 @@ sub test_RulesBasedWikiWords {
 
     $source = <<END_SOURCE;
 Test Item123 and FAQ23 Test
+Test Plugins
 END_SOURCE
 
     $expected = <<END_EXPECTED;
 Test [[Tasks.Item123][Item123]] and [[Support.FAQ23][FAQ23]] Test
+Test [[$this->{test_web}.Plugins][Plugins]]
 END_EXPECTED
 
     $this->doTest( $source, $expected, 0 );
@@ -289,6 +292,35 @@ END_SOURCE
     $expected = $source;
 
     $this->doTest( $source, $expected, 0 );
+}
+
+# ########################################################
+# Verify that Acronym linking can be controlled
+# ########################################################
+
+sub test_AcronymLimits {
+    my $this = shift;
+
+    Foswiki::Func::setPreferencesValue( 'CONTROLWIKIWORDPLUGIN_LIMITACRONYMS',
+        '1' );
+
+    setLocalSite();
+
+    # Create the topic named HTML to verify 2nd Acronym link.
+    Foswiki::Func::saveTopicText( $this->{test_web}, "HTML", <<NONNY );
+  TESTING 1 2 3 4 
+NONNY
+
+    $source = <<END_SOURCE;
+Test HTML, HTTP  and HTML and [[HTML]] Test
+END_SOURCE
+
+    $expected = <<END_EXPECTED;
+Test HTML, HTTP  and <nop>HTML and [[HTML]] Test
+END_EXPECTED
+
+    $this->doTest( $source, $expected, 0 );
+
 }
 
 # ####################
