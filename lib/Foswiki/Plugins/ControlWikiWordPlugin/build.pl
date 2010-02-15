@@ -11,7 +11,7 @@ $build = new Foswiki::Contrib::Build('ControlWikiWordPlugin');
 # files, but be warned, they can be overridden at upload time!
 
 # name of web to upload to
-$build->{UPLOADTARGETWEB} = 'Extensions';
+$build->{UPLOADTARGETWEB} = 'Sandbox/Beta';
 
 # Full URL of pub directory
 $build->{UPLOADTARGETPUB} = 'http://foswiki.org/pub';
