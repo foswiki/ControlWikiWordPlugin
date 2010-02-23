@@ -1,5 +1,7 @@
 %META:TOPICINFO{author="ProjectContributor" comment="reprev" date="1263786249" format="1.1" reprev="1.2" version="1.2"}%
 ---+!! !ControlWikiWordPlugin
+<img src="%ATTACHURLPATH%/CWW_thumb.png" alt="Control Wiki Word Plugin Logo" title="Control Wiki Word  Plugin Logo" style="float:right" />
+
 <!--
 One line description, required for extensions repository catalog.
 BuildContrib will fill in the SHORTDESCRIPTION with the value of
@@ -153,8 +155,11 @@ modifiers. The - "negates" or turns off the following options:
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
 |  Change History: | <!-- versions below in reverse order --> |
+|  22 Feb 2010 | Foswikitask:Item8433 - Restructured internals.  Added feature to control Acronym linking to first instance in a topic. |
 |  Dependencies: | %$DEPENDENCIES% |
 |  Home page: | http://foswiki.org/bin/view/Extensions/ControlWikiWordPlugin |
 |  Support: | http://foswiki.org/bin/view/Support/ControlWikiWordPlugin |
 
 <!-- Do _not_ attempt to edit this topic; it is auto-generated. -->
+%META:FILEATTACHMENT{name="CWW_thumb.png" attachment="CWW_thumb.png" attr="h" comment="100x100 PNG Logo" date="1263000606" path="CWW_thumb.png" size="2344" user="ProjectContributor" version="1"}%
+

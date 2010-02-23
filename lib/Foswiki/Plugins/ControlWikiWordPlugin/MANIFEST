@@ -3,4 +3,5 @@ data/System/ControlWikiWordPlugin.txt 0644 Documentation
 lib/Foswiki/Plugins/ControlWikiWordPlugin.pm 0644 Perl module
 lib/Foswiki/Plugins/ControlWikiWordPlugin/Config.spec 0644
 lib/Foswiki/Plugins/ControlWikiWordPlugin/Core.pm 0644
+pub/System/ControlWikiWordPlugin/CWW_thumb.png 644
 

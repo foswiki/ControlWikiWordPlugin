@@ -33,12 +33,12 @@ our $VERSION = '$Rev: 1340 $';
 # This is a free-form string you can use to "name" your own plugin version.
 # It is *not* used by the build automation tools, but is reported as part
 # of the version number in PLUGINDESCRIPTIONS.
-our $RELEASE = '1.0-RC1';
+our $RELEASE = '1.0';
 
 # Short description of this plugin
 # # One line description, is shown in the %SYSTEMWEB%.TextFormattingRules topic:
 our $SHORTDESCRIPTION =
-'Plugin to stop linking of WikiWords or force linking of non-standard Wikiwords';
+'Plugin to stop linking of WikiWords or force linking of non-standard WikiWords';
 
 # You must set $NO_PREFS_IN_TOPIC to 0 if you want your plugin to use
 # preferences set in the plugin topic. This is required for compatibility
