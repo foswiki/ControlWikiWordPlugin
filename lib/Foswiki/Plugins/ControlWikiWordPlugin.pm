@@ -7,6 +7,11 @@
 #   Copyright (C) 2001 Peter Thoeny, Peter@Thoeny.com
 # and the StopWikiWordLinkPlugin
 #    Copyright (C) 2006 Peter Thoeny, peter@thoeny.org
+# and the FindElsewherePlugin
+#    Copyright (C) 2002 Mike Barton, Marco Carnut, Peter Hernst
+#	   (C) 2003 Martin Cleaver, (C) 2004 Matt Wilkie (C) 2007 Crawford Currie
+#      (C) 2008 Foswiki Contributors
+#
 #    All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -33,7 +38,7 @@ our $VERSION = '$Rev: 1340 $';
 # This is a free-form string you can use to "name" your own plugin version.
 # It is *not* used by the build automation tools, but is reported as part
 # of the version number in PLUGINDESCRIPTIONS.
-our $RELEASE = '1.0';
+our $RELEASE = '1.0.1';
 
 # Short description of this plugin
 # # One line description, is shown in the %SYSTEMWEB%.TextFormattingRules topic:
