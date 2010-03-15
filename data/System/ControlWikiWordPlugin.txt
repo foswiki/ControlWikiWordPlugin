@@ -25,6 +25,7 @@ All functions are disabled by default unless explicitly enabled.
 
 -----
 ---+++ Rules-based blocking of WikiWord linking
+_Originally implemented in the !StopWikiWordPlugin_
 
 In this mode, the Plugin prevents automatic linking of selected [[%SYSTEMWEB%.WikiWord][WikiWords]] such as <nop>LinuxWorld or <nop>MacDonald.
 
@@ -44,6 +45,7 @@ In this mode, the Plugin prevents automatic linking of selected [[%SYSTEMWEB%.Wi
 
 -----
 ---+++ Acronym Linking Control
+_Adapted from the Acronym limits provided by the !FindElsewherePlugin_
 
 In addition to WikiWords, Foswiki will auto-link Acronyms - any string
 consisting of 3 or more upper-case letters and numbers. WikiWords are always
@@ -71,6 +73,7 @@ HTML is an example of an ACRONYM, as is RSS.   If an ACRONYM occurs twice, only
 the first instance will be linked.  
 
 ---+++ Singleton<nop>WikiWordPlugin compatible operation
+_Originally implemented in the !SingletonWikiWordPlugin_
 
 In this mode, the plugin will interpret that a single word is a reference to a Foswiki Topic of that name. To create a Singleton link, write a dot before the topic name. For example, if you have a topic named _Ontology_ you can link to it as _<nop><strong>.</strong>Ontology_ This adds a simpler way to force a single word link. You can already accomplish the same thing by enclosing the word in double square brackets, like this: <nop>[<nop>[Ontology]]
 
@@ -149,7 +152,7 @@ modifiers. The - "negates" or turns off the following options:
 
 ---++ Info
 
-|  Author(s): | Foswiki:Main/GeorgeClark |
+|  Author(s): | Foswiki:Main/GeorgeClark<br /> Foswiki:Main/MartinCleaver - Singleton Wiki Words <br /> TWiki:Main.PeterThoeny - Stop Wiki Word Links <br /> TWiki:Main.MikeBarton, Foswiki:Main.KennethLavrsen - First Acronym linking |
 |  Copyright: | © 2010 George Clark. Adapted from code: <br />Copyright (C) 2000-2001 Andrea Sterbini, a.sterbini@flashnet.it <br /> Copyright (C) 2001, 2006 Peter Thoeny, Peter@Thoeny.com |
 |  License: | [[http://www.gnu.org/licenses/gpl.html][GPL (Gnu General Public License)]] |
 |  Release: | %$RELEASE% |
