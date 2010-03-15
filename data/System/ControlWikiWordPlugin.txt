@@ -158,6 +158,7 @@ modifiers. The - "negates" or turns off the following options:
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
 |  Change History: | <!-- versions below in reverse order --> |
+|  15 Mar 2010 | Foswikitask:Item8714 - Update author and copyright attributions.  Bump version - no code changes. |
 |  22 Feb 2010 | Foswikitask:Item8433 - Restructured internals.  Added feature to control Acronym linking to first instance in a topic. |
 |  Dependencies: | %$DEPENDENCIES% |
 |  Home page: | http://foswiki.org/bin/view/Extensions/ControlWikiWordPlugin |
