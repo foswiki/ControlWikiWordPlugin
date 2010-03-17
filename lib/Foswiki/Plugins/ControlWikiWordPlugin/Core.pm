@@ -90,12 +90,14 @@ sub _preRender {
     if ($stopWords) {
 
         # build regularex:
-        $stopWords =~ s/\, */\|/go;
-        $stopWords =~ s/^ *//o;
-        $stopWords =~ s/ *$//o;
-        $stopWords =~ s/[^A-Za-z0-9\|]//go;
+        $stopWords =~ s/\, */\|/go;         # Change comma's to "or"
+        $stopWords =~ s/^ *//o;             # Drop leading spaces
+        $stopWords =~ s/ *$//o;             # Drop trailing spaces
+        $stopWords =~ s/[^A-Za-z0-9\|]//go; # Filter any special characters
+        $stopWords =~ s/\|/[\\W\\s]|/go;    # Add a Word or Whitespace separator
+        $stopWords .= '[\W\s]';             #  .. and a trailing one too.
         $stopWordsRE = "(^|[\( \n\r\t\|])($stopWords)"
-          ;                  # WikiWord preceeded by space or parens
+          ;    # WikiWord preceeded by space or parens
         Foswiki::Func::writeDebug(
             "ControlWikiWordPlugin -  stopWordsRE: $stopWordsRE")
           if $debug;

@@ -27,7 +27,7 @@ All functions are disabled by default unless explicitly enabled.
 ---+++ Rules-based blocking of WikiWord linking
 _Originally implemented in the !StopWikiWordPlugin_
 
-In this mode, the Plugin prevents automatic linking of selected [[%SYSTEMWEB%.WikiWord][WikiWords]] such as <nop>LinuxWorld or <nop>MacDonald.
+In this mode, the Plugin prevents automatic linking of selected [[%SYSTEMWEB%.WikiWord][WikiWords]] such as <nop>LinuxWorld or <nop>MacDonald.  These are an exact match.  A Stop word contained as a prefix to a longer WikiWord should still be linked.
 
 ---++++ Configuration
 !WikiWords that should not be automatically linked are listed in a STOPWIKIWORDLINK preferences setting. This is typically done in the [[%LOCALSITEPREFS%]], but can be done also in any web (in %WEBPREFSTOPIC%), in the User topic for personal preferences, or in a single topic. See sample entry in the Plugin settings.
@@ -42,6 +42,7 @@ In this mode, the Plugin prevents automatic linking of selected [[%SYSTEMWEB%.Wi
 ---++++ Examples
    * Test if the installation was successful. The following words will not be linked in this topic. (The above setting needs to be copied to one of the preferences locations to activate for other webs or topics.): 
       * LinuxWorld, MacDonald
+      * But MacDonalds should still be a WikiWord.
 
 -----
 ---+++ Acronym Linking Control
@@ -158,6 +159,7 @@ modifiers. The - "negates" or turns off the following options:
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
 |  Change History: | <!-- versions below in reverse order --> |
+|  16 Mar 2010 | Foswikitask:Item8720 - STOPWIKIWORDLINK should be an exact match. |
 |  15 Mar 2010 | Foswikitask:Item8714 - Update author and copyright attributions.  Bump version - no code changes. |
 |  22 Feb 2010 | Foswikitask:Item8433 - Restructured internals.  Added feature to control Acronym linking to first instance in a topic. |
 |  Dependencies: | %$DEPENDENCIES% |

@@ -257,6 +257,49 @@ END_EXPECTED
 
 }
 
+=pod
+
+---++ Stop WikiWord Link - prefix test (Item8720)
+
+=cut
+
+# ########################################################
+# Verify that WikiWords are blocked
+# ########################################################
+sub test_PrefixStop_Item8720 {
+    my $this = shift;
+
+    Foswiki::Func::setPreferencesValue( 'NOAUTOLINK', '0' );
+
+    $source = <<END_SOURCE;
+Test MacDonald but not MacDonalds Farm 
+END_SOURCE
+
+    $expected = <<END_EXPECTED;
+Test <nop>MacDonald but not MacDonalds Farm 
+END_EXPECTED
+
+    # Verify blocks with plugin setting
+
+    Foswiki::Func::setPreferencesValue(
+        'CONTROLWIKIWORDPLUGIN_STOPWIKIWORDLINK',
+        'MacDonald, WikiWord, MyTest' );
+    $this->doTest( $source, $expected, 0 );
+
+    # Verify blocks with simple punctuation
+
+    $source = <<END_SOURCE;
+Test (MacDonald) and MacDonald, but not MacDonalds Farm 
+END_SOURCE
+
+    $expected = <<END_EXPECTED;
+Test (<nop>MacDonald) and <nop>MacDonald, but not MacDonalds Farm 
+END_EXPECTED
+
+    $this->doTest( $source, $expected, 0 );
+
+}
+
 # ########################################################
 # Verify that rules based wikiwords are linked
 # ########################################################
