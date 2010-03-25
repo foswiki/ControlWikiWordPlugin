@@ -2,7 +2,8 @@ use strict;
 
 package ControlWikiWordPluginTests;
 
-use base qw( FoswikiFnTestCase );
+use FoswikiFnTestCase;
+our @ISA = qw( FoswikiFnTestCase );
 
 #use base qw(FoswikiTestCase);
 
