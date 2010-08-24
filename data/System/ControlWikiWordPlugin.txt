@@ -23,6 +23,8 @@ This plugin provides 4 functions:
 
 All functions are disabled by default unless explicitly enabled.
 
+|%X% *Note:* The linking rules provided by this extension are __not__ evalutated during topic rename actions.<ul><li>Links that are forced by this plugin will not be renamed.<li>Linking words that are blocked by this plugin will still be renamed. </ul> |
+
 -----
 ---+++ Rules-based blocking of WikiWord linking
 _Originally implemented in the !StopWikiWordPlugin_
