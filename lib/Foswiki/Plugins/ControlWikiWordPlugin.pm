@@ -1,29 +1,4 @@
-# Foswiki WikiClone ($wikiversion has version info)
-#
-#  Copyright (C) 2010 George Clark, geonwiki@fenachrone.com
-#
-# This plugin contains code adapted from the SingletonWikiWordPlugin
-#   Copyright (C) 2000-2001 Andrea Sterbini, a.sterbini@flashnet.it
-#   Copyright (C) 2001 Peter Thoeny, Peter@Thoeny.com
-# and the StopWikiWordLinkPlugin
-#    Copyright (C) 2006 Peter Thoeny, peter@thoeny.org
-# and the FindElsewherePlugin
-#    Copyright (C) 2002 Mike Barton, Marco Carnut, Peter Hernst
-#	   (C) 2003 Martin Cleaver, (C) 2004 Matt Wilkie (C) 2007 Crawford Currie
-#      (C) 2008 Foswiki Contributors
-#
-#    All Rights Reserved.
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details, published at
-# http://www.gnu.org/copyleft/gpl.html
+# See bottom of file for default license and copyright information
 
 package Foswiki::Plugins::ControlWikiWordPlugin;
 
@@ -38,7 +13,7 @@ our $VERSION = '$Rev: 1340 $';
 # This is a free-form string you can use to "name" your own plugin version.
 # It is *not* used by the build automation tools, but is reported as part
 # of the version number in PLUGINDESCRIPTIONS.
-our $RELEASE = '1.1';
+our $RELEASE = '1.2';
 
 # Short description of this plugin
 # # One line description, is shown in the %SYSTEMWEB%.TextFormattingRules topic:
@@ -241,4 +216,33 @@ sub _findAbbrev {
 }
 
 1;
+__END__
+Foswiki - The Free and Open Source Wiki, http://foswiki.org/
+
+  Copyright (C) 2010 George Clark, geonwiki@fenachrone.com
+
+ This plugin contains code adapted from the SingletonWikiWordPlugin
+   Copyright (C) 2000-2001 Andrea Sterbini, a.sterbini@flashnet.it
+   Copyright (C) 2001 Peter Thoeny, Peter@Thoeny.com
+ and the StopWikiWordLinkPlugin
+    Copyright (C) 2006 Peter Thoeny, peter@thoeny.org
+ and the FindElsewherePlugin
+    Copyright (C) 2002 Mike Barton, Marco Carnut, Peter Hernst
+	Copyright (C) 2003 Martin Cleaver, (C) 2004 Matt Wilkie (C) 2007 Crawford Currie
+
+Copyright (C) 2008-2010 Foswiki Contributors. Foswiki Contributors
+are listed in the AUTHORS file in the root of this distribution.
+NOTE: Please extend that file, not this notice.
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version. For
+more details read LICENSE in the root of this distribution.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+As per the GPL, removal of this notice is prohibited.
 
