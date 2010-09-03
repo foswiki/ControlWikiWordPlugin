@@ -55,16 +55,19 @@ sub initPlugin {
     # Get plugin debug flag
     $debug = Foswiki::Func::getPreferencesFlag("CONTROLWIKIWORDPLUGIN_DEBUG");
 
-    Foswiki::Func::writeDebug(" CONTROWIKIWORDPLUGIN_DEBUG is enabled ") if $debug;
+    Foswiki::Func::writeDebug(" CONTROWIKIWORDPLUGIN_DEBUG is enabled ")
+      if $debug;
 
     if ( Foswiki::Func::getPreferencesFlag('NOAUTOLINK') )
     {    # skip plugin if noautolink set for whole topic
-        Foswiki::Func::writeDebug("Disabling plugin - NOAUTOLINK set for whole topic") if $debug;
+        Foswiki::Func::writeDebug(
+            "Disabling plugin - NOAUTOLINK set for whole topic")
+          if $debug;
         $disabled = 1;
         return 1;
     }
 
-    # pre-rendering handler doesn't get passed a web name.  So save it here in a global
+# pre-rendering handler doesn't get passed a web name.  So save it here in a global
     $web = $_[1];
 
     $prefs{'regexInput'} =
@@ -78,15 +81,18 @@ sub initPlugin {
         "STOPWIKIWORDLINKPLUGIN_STOPWIKIWORDLINK")
       || '';
 
-    if ($prefs{'stopWords'}) {
-        Foswiki::Func::writeDebug("stopWords start as ($prefs{'stopWords'})  ") if $debug;
-        $prefs{'stopWords'} =~ s/\, */\|/go;         # Change comma's to "or"
-        $prefs{'stopWords'} =~ s/^ *//o;             # Drop leading spaces
-        $prefs{'stopWords'} =~ s/ *$//o;             # Drop trailing spaces
-        #SMELL:  This ought to be done in the config checker - error out non-WikiWords 
-        $prefs{'stopWords'} =~ s/[^$Foswiki::regex{mixedAlphaNum}\|]//go;  # Filter any characters not valid in WikiWords
-        $prefs{'stopWords'} =~ s/\|/[\\W\\s]|/go;    # Add a Word or Whitespace separator
-        $prefs{'stopWords'} .= '[\W\s]';             #  .. and a trailing one too.
+    if ( $prefs{'stopWords'} ) {
+        Foswiki::Func::writeDebug("stopWords start as ($prefs{'stopWords'})  ")
+          if $debug;
+        $prefs{'stopWords'} =~ s/\, */\|/go;    # Change comma's to "or"
+        $prefs{'stopWords'} =~ s/^ *//o;        # Drop leading spaces
+        $prefs{'stopWords'} =~ s/ *$//o;        # Drop trailing spaces
+          #SMELL:  This ought to be done in the config checker - error out non-WikiWords
+        $prefs{'stopWords'} =~ s/[^$Foswiki::regex{mixedAlphaNum}\|]//go
+          ;    # Filter any characters not valid in WikiWords
+        $prefs{'stopWords'} =~
+          s/\|/[\\W\\s]|/go;    # Add a Word or Whitespace separator
+        $prefs{'stopWords'} .= '[\W\s]';    #  .. and a trailing one too.
     }
 
     $prefs{'controlAbbrev'} =
@@ -124,19 +130,19 @@ sub preRenderingHandler {
 
         # build regularex:
         $stopWordsRE = "(^|[\( \n\r\t\|])($stopWords)"
-          ;    # WikiWord preceeded by space or parens
+          ;                  # WikiWord preceeded by space or parens
         Foswiki::Func::writeDebug(
             "ControlWikiWordPlugin -  stopWordsRE: $stopWordsRE")
           if $debug;
     }
 
-
     my $renderer         = $Foswiki::Plugins::SESSION->renderer();
     my $removedTextareas = {};
     my $removedProtected = {};
 
-    #Foswiki::Func::writeDebug("stopWords ($stopWordsRE) before ($_[0]")  if $debug;
+#Foswiki::Func::writeDebug("stopWords ($stopWordsRE) before ($_[0]")  if $debug;
     $_[0] =~ s/$stopWordsRE/$1<nop>$2/g if ($stopWordsRE);
+
     #Foswiki::Func::writeDebug("stopWords after ($_[0] ") if $debug;
 
     # If we don't have any regex and don't want the dot format, forget it.
@@ -202,15 +208,18 @@ sub preRenderingHandler {
 sub _findAbbrev {
 
     Foswiki::Func::writeDebug("Found abbrev $_[1] ") if $debug;
-    if (   ( exists $acronyms{$_[1]} )
+    if (   ( exists $acronyms{ $_[1] } )
         && ( Foswiki::Func::topicExists( $_[0], $_[1] ) ) )
     {
-        Foswiki::Func::writeDebug(" -- Duplicate - returning <nop>$_[1] ") if $debug;
+        Foswiki::Func::writeDebug(" -- Duplicate - returning <nop>$_[1] ")
+          if $debug;
         return "<nop>" . $_[1];
     }
     else {
-        $acronyms{$_[1]} = 1;
-        Foswiki::Func::writeDebug(" -- First find, or topic doesn't exist` - returning $_[1] ") if $debug;
+        $acronyms{ $_[1] } = 1;
+        Foswiki::Func::writeDebug(
+            " -- First find, or topic doesn't exist` - returning $_[1] ")
+          if $debug;
         return $_[1];
     }
 }
