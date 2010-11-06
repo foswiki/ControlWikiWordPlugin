@@ -227,6 +227,10 @@ END_EXPECTED
 
     # Verify blocks with plugin setting
 
+    # Note that the short preference takes prescedence so need to clear.
+    Foswiki::Func::setPreferencesValue(
+        'STOPWIKIWORDLINK',
+        '' );
     Foswiki::Func::setPreferencesValue(
         'CONTROLWIKIWORDPLUGIN_STOPWIKIWORDLINK',
         'MacDonald, WikiWord, MyTest' );

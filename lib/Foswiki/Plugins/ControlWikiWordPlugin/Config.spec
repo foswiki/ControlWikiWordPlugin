@@ -8,5 +8,5 @@
 $Foswiki::cfg{Plugins}{ControlWikiWordPlugin}{SingletonWords} = {
   '(?:Item[[:digit:]]{3,6})' => 'Tasks',
   '(?:Question[[:digit:]]{3,5}|FAQ[[:digit:]]{1,3})' => 'Support',
-  '(?:Plugins)' => ''
+  '(?:Plugins)' => '',
 }; 

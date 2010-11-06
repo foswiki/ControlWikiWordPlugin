@@ -87,12 +87,8 @@ sub initPlugin {
         $prefs{'stopWords'} =~ s/\, */\|/go;    # Change comma's to "or"
         $prefs{'stopWords'} =~ s/^ *//o;        # Drop leading spaces
         $prefs{'stopWords'} =~ s/ *$//o;        # Drop trailing spaces
-          #SMELL:  This ought to be done in the config checker - error out non-WikiWords
         $prefs{'stopWords'} =~ s/[^$Foswiki::regex{mixedAlphaNum}\|]//go
           ;    # Filter any characters not valid in WikiWords
-        $prefs{'stopWords'} =~
-          s/\|/[\\W\\s]|/go;    # Add a Word or Whitespace separator
-        $prefs{'stopWords'} .= '[\W\s]';    #  .. and a trailing one too.
     }
 
     $prefs{'controlAbbrev'} =
@@ -124,13 +120,16 @@ sub preRenderingHandler {
     my $controlAbbrev = $prefs{'controlAbbrev'};
     my $dotSINGLETON  = $prefs{'dotSINGLETON'};
 
+    #Lookbehind / Lookahead WikiWord delimiters taken from Foswiki::Render
+    my $STARTWW = qr/^|(?<=[\s\(])/m;
+    my $ENDWW   = qr/$|(?=[\s,.;:!?)])/m;
+
     my $stopWordsRE = '';    # Clear - handler only processes topic if provided
 
     if ($stopWords) {
 
         # build regularex:
-        $stopWordsRE = "(^|[\( \n\r\t\|])($stopWords)"
-          ;                  # WikiWord preceeded by space or parens
+        $stopWordsRE = qr/$STARTWW($stopWords)$ENDWW/;
         Foswiki::Func::writeDebug(
             "ControlWikiWordPlugin -  stopWordsRE: $stopWordsRE")
           if $debug;
@@ -140,10 +139,7 @@ sub preRenderingHandler {
     my $removedTextareas = {};
     my $removedProtected = {};
 
-#Foswiki::Func::writeDebug("stopWords ($stopWordsRE) before ($_[0]")  if $debug;
-    $_[0] =~ s/$stopWordsRE/$1<nop>$2/g if ($stopWordsRE);
-
-    #Foswiki::Func::writeDebug("stopWords after ($_[0] ") if $debug;
+    $_[0] =~ s/$stopWordsRE/<nop>$1/g if ($stopWordsRE);
 
     # If we don't have any regex and don't want the dot format, forget it.
     if ( scalar keys %$regexInput > 0 || $dotSINGLETON || $controlAbbrev ) {
@@ -173,24 +169,28 @@ sub preRenderingHandler {
             my $linkWeb = $regexInput->{$regex} || $web;
             Foswiki::Func::writeDebug(" Regex is $regex Web is $linkWeb  ")
               if $debug;
-            $_[0] =~ s/(\s)($regex)\b/$1."[[$linkWeb.$2][$2]]"/ge;
+            $_[0] =~ s/$STARTWW($regex)$ENDWW/"[[$linkWeb.$1][$1]]"/ge;
         }
 
-        $_[0] =~ s/(\s+)\.([A-Z]+[a-z]*)/"$1"."[[$web.$2][$2]]"/geo
+        $_[0] =~ s/$STARTWW\.([A-Z]+[a-z]*)$ENDWW/"[[$web.$1][$1]]"/geo
           if ($dotSINGLETON);
 
         if ($controlAbbrev) {
             undef %acronyms;
             Foswiki::Func::writeDebug("Clearing acronyms") if $debug;
             $_[0] =~ s/(
-                 (?:^|(?<=[\s\(,]))           # Prefix
+                 $STARTWW                                       # Prefix
                  (?:$Foswiki::regex{'webNameRegex'}\.)?         # Webname. optional
                  (?:$Foswiki::regex{'abbrevRegex'})             # Abbreviation
+                 $ENDWW
                )
                /&_findAbbrev($web,$1)
                /geox;
         }
 
+        # Need to put back everything in the reverse order that it was removed.
+        $renderer->_putBackProtected( \$_[0], 'htmllink', $removedProtected );
+        $renderer->_putBackProtected( \$_[0], 'wikilink', $removedProtected );
         # put back everything that was removed
         if ($@) {
             Foswiki::putBackBlocks( \$_[0], $removedTextareas, 'noautolink',
@@ -200,8 +200,6 @@ sub preRenderingHandler {
             $renderer->putBackBlocks( \$_[0], $removedTextareas, 'noautolink',
                 'noautolink' );
         }
-        $renderer->_putBackProtected( \$_[0], 'wikilink', $removedProtected );
-        $renderer->_putBackProtected( \$_[0], 'htmllink', $removedProtected );
     }
 }
 
