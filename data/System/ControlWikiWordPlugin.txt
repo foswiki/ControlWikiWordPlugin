@@ -161,6 +161,7 @@ modifiers. The - "negates" or turns off the following options:
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
 |  Change History: | <!-- versions below in reverse order --> |
+|  22 Jul 2011 | Foswikitask:Item10997 - Fix issue with ending delimiter for STOPWIKIWORDLINK |
 |   6 Nov 2010 | Foswikitask:Item9964 - Fix issue with Attachment table on 1.1,  Foswikitask:Item9968 - Improve regular expressions |
 |  24 Aug 2010 | Foswikitask:Item9473 - Restructure for performance, clarify documentation |
 |  16 Mar 2010 | Foswikitask:Item8720 - STOPWIKIWORDLINK should be an exact match. |
