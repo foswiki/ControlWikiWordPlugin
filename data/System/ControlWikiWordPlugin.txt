@@ -43,8 +43,8 @@ In this mode, the Plugin prevents automatic linking of selected [[%SYSTEMWEB%.Wi
 
 ---++++ Examples
    * Test if the installation was successful. The following words will not be linked in this topic. (The above setting needs to be copied to one of the preferences locations to activate for other webs or topics.): 
-      * LinuxWorld, MacDonald
-      * But MacDonalds should still be a WikiWord.
+      * LinuxWorld, MacDonald and MacDonald/Farm
+      * But MacDonalds and MacDonalds/Farm should still be WikiWords.
 
 -----
 ---+++ Acronym Linking Control

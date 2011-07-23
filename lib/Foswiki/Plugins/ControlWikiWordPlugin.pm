@@ -122,7 +122,7 @@ sub preRenderingHandler {
 
     #Lookbehind / Lookahead WikiWord delimiters taken from Foswiki::Render
     my $STARTWW = qr/^|(?<=[\s\(])/m;
-    my $ENDWW   = qr/$|(?=[\s,.;:!?)])/m;
+    my $ENDWW   = qr/$|(?=[^[:alpha:][:digit:]])/m;
 
     my $stopWordsRE = '';    # Clear - handler only processes topic if provided
 

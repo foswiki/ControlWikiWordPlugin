@@ -218,11 +218,11 @@ sub test_BlockWikiWordTest {
     Foswiki::Func::setPreferencesValue( 'NOAUTOLINK', '0' );
 
     $source = <<END_SOURCE;
-Test WikiWord, MacDonald Farm  Word
+Test WikiWord, MacDonald Farm  Word FiSa/AML
 END_SOURCE
 
     $expected = <<END_EXPECTED;
-Test <nop>WikiWord, <nop>MacDonald Farm  Word
+Test <nop>WikiWord, <nop>MacDonald Farm  Word <nop>FiSa/AML
 END_EXPECTED
 
     # Verify blocks with plugin setting
@@ -233,7 +233,7 @@ END_EXPECTED
         '' );
     Foswiki::Func::setPreferencesValue(
         'CONTROLWIKIWORDPLUGIN_STOPWIKIWORDLINK',
-        'MacDonald, WikiWord, MyTest' );
+        'MacDonald, WikiWord, MyTest, FiSa', );
     $this->doTest( $source, $expected, 0 );
 
 # Verify blocks with simple setting, and simple setting takes precedence over Plugin setting
@@ -244,7 +244,7 @@ END_EXPECTED
         'WikiWord, MyTest' );
 
     $expected = <<END_EXPECTED;
-Test <nop>WikiWord, MacDonald Farm  Word
+Test <nop>WikiWord, MacDonald Farm  Word FiSa/AML
 END_EXPECTED
 
     $this->doTest( $source, $expected, 0 );
