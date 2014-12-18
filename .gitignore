@@ -1,0 +1,9 @@
+*.swp
+igp_*
+ControlWikiWordPlugin.md5
+ControlWikiWordPlugin.sha1
+ControlWikiWordPlugin.tgz
+ControlWikiWordPlugin.txt
+ControlWikiWordPlugin.zip
+ControlWikiWordPlugin_installer
+ControlWikiWordPlugin_installer.pl

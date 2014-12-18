@@ -1,4 +1,5 @@
-%META:TOPICINFO{author="ProjectContributor" comment="reprev" date="1263786249" format="1.1" reprev="1.2" version="1.2"}%
+%META:TOPICINFO{author="BaseUserMapping_999" comment="autosave" date="1356278770" format="1.1" version="1"}%
+
 ---+!! !ControlWikiWordPlugin
 <img src="%ATTACHURLPATH%/CWW_thumb.png" alt="Control Wiki Word Plugin Logo" title="Control Wiki Word  Plugin Logo" style="float:right" />
 
@@ -156,7 +157,7 @@ modifiers. The - "negates" or turns off the following options:
 ---++ Info
 
 |  Author(s): | Foswiki:Main/GeorgeClark<br /> Foswiki:Main/MartinCleaver - Singleton Wiki Words <br /> TWiki:Main.PeterThoeny - Stop Wiki Word Links <br /> TWiki:Main.MikeBarton, Foswiki:Main.KennethLavrsen - First Acronym linking |
-|  Copyright: | © 2010 George Clark. Adapted from code: <br />Copyright (C) 2000-2001 Andrea Sterbini, a.sterbini@flashnet.it <br /> Copyright (C) 2001, 2006 Peter Thoeny, Peter@Thoeny.com |
+|  Copyright: | Copyright (C) 2010 George Clark. Adapted from code: <br />Copyright (C) 2000-2001 Andrea Sterbini, a.sterbini@flashnet.it <br /> Copyright (C) 2001, 2006 Peter Thoeny, Peter@Thoeny.com |
 |  License: | [[http://www.gnu.org/licenses/gpl.html][GPL (Gnu General Public License)]] |
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
