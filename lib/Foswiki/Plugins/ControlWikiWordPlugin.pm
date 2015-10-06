@@ -146,16 +146,9 @@ sub preRenderingHandler {
 
 # SMELL: Directly calling Foswiki and Render functions is not recommended.
 # This needs to be validated for any major changes in Foswiki.   Tested on 1.0.9 and 1.1.0 trunk
-# Determine which release of Foswiki in use - R1.1 moved takeOUtBlocks into Foswiki proper
 
         # Remove any <noautolink> blocks from the topic
-        eval(
-'$renderer->takeOutBlocks( $_[0], \'noautolink\', $removedTextareas )'
-        );
-        if ( $@ ne "" ) {
-            $_[0] =
-              Foswiki::takeOutBlocks( $_[0], 'noautolink', $removedTextareas );
-        }
+        $_[0] = Foswiki::takeOutBlocks( $_[0], 'noautolink', $removedTextareas );
 
         # Also remove any forced links from the topic.
         $_[0] =
@@ -193,14 +186,7 @@ sub preRenderingHandler {
         $renderer->_putBackProtected( \$_[0], 'wikilink', $removedProtected );
 
         # put back everything that was removed
-        if ($@) {
-            Foswiki::putBackBlocks( \$_[0], $removedTextareas, 'noautolink',
-                'noautolink' );
-        }
-        else {
-            $renderer->putBackBlocks( \$_[0], $removedTextareas, 'noautolink',
-                'noautolink' );
-        }
+        Foswiki::putBackBlocks( \$_[0], $removedTextareas, 'noautolink', 'noautolink' );
     }
 }
 
