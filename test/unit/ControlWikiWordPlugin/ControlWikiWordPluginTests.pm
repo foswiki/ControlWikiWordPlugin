@@ -20,12 +20,12 @@ my $source;
 #my $foswiki;
 
 sub new {
-    my $self = shift()->SUPER::new( 'ControlWikWordPluginFunctions', @_ );
+    my $self = shift()->SUPER::new( 'ControlWikiWordPluginFunctions', @_ );
     return $self;
 }
 
 sub setLocalSite {
-    $Foswiki::cfg{Plugins}{ControlWikWordPlugin}{Enabled} = 1;
+    $Foswiki::cfg{Plugins}{ControlWikiWordPlugin}{Enabled} = 1;
     $Foswiki::cfg{Plugins}{ControlWikiWordPlugin}{Module} =
       'Foswiki::Plugins::ControlWikiWordPlugin';
     $Foswiki::cfg{Plugins}{ControlWikiWordPlugin}{SingletonWords} = {

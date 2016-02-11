@@ -5,15 +5,8 @@ package Foswiki::Plugins::ControlWikiWordPlugin;
 use strict;
 use warnings;
 
-# This should always be $Rev: 1340 $ so that Foswiki can determine the checked-in
-# status of the plugin. It is used by the build automation tools, so
-# you should leave it alone.
-our $VERSION = '1.4';
-
-# This is a free-form string you can use to "name" your own plugin version.
-# It is *not* used by the build automation tools, but is reported as part
-# of the version number in PLUGINDESCRIPTIONS.
-our $RELEASE = '1.4';
+our $VERSION = '1.5';
+our $RELEASE = '1.5';
 
 # Short description of this plugin
 # # One line description, is shown in the %SYSTEMWEB%.TextFormattingRules topic:
@@ -44,6 +37,9 @@ BEGIN {
 sub initPlugin {
 
     #my( $topic, $web, $user, $installWeb ) = @_;
+
+    # Reset $disabled for persistent perl
+    $disabled = 0;
 
     # check for Plugins.pm versions
     if ( $Foswiki::Plugins::VERSION < 1 ) {
@@ -84,10 +80,10 @@ sub initPlugin {
     if ( $prefs{'stopWords'} ) {
         Foswiki::Func::writeDebug("stopWords start as ($prefs{'stopWords'})  ")
           if $debug;
-        $prefs{'stopWords'} =~ s/\, */\|/go;    # Change comma's to "or"
-        $prefs{'stopWords'} =~ s/^ *//o;        # Drop leading spaces
-        $prefs{'stopWords'} =~ s/ *$//o;        # Drop trailing spaces
-        $prefs{'stopWords'} =~ s/[^$Foswiki::regex{mixedAlphaNum}\|]//go
+        $prefs{'stopWords'} =~ s/\, */\|/g;    # Change comma's to "or"
+        $prefs{'stopWords'} =~ s/^ *//;        # Drop leading spaces
+        $prefs{'stopWords'} =~ s/ *$//;        # Drop trailing spaces
+        $prefs{'stopWords'} =~ s/[^$Foswiki::regex{mixedAlphaNum}\|]//g
           ;    # Filter any characters not valid in WikiWords
     }
 
@@ -148,7 +144,8 @@ sub preRenderingHandler {
 # This needs to be validated for any major changes in Foswiki.   Tested on 1.0.9 and 1.1.0 trunk
 
         # Remove any <noautolink> blocks from the topic
-        $_[0] = Foswiki::takeOutBlocks( $_[0], 'noautolink', $removedTextareas );
+        $_[0] =
+          Foswiki::takeOutBlocks( $_[0], 'noautolink', $removedTextareas );
 
         # Also remove any forced links from the topic.
         $_[0] =
@@ -165,7 +162,7 @@ sub preRenderingHandler {
             $_[0] =~ s/$STARTWW($regex)$ENDWW/"[[$linkWeb.$1][$1]]"/ge;
         }
 
-        $_[0] =~ s/$STARTWW\.([A-Z]+[a-z]*)$ENDWW/"[[$web.$1][$1]]"/geo
+        $_[0] =~ s/$STARTWW\.([A-Z]+[a-z]*)$ENDWW/"[[$web.$1][$1]]"/ge
           if ($dotSINGLETON);
 
         if ($controlAbbrev) {
@@ -178,7 +175,7 @@ sub preRenderingHandler {
                  $ENDWW
                )
                /&_findAbbrev($web,$1)
-               /geox;
+               /gex;
         }
 
         # Need to put back everything in the reverse order that it was removed.
@@ -186,7 +183,8 @@ sub preRenderingHandler {
         $renderer->_putBackProtected( \$_[0], 'wikilink', $removedProtected );
 
         # put back everything that was removed
-        Foswiki::putBackBlocks( \$_[0], $removedTextareas, 'noautolink', 'noautolink' );
+        Foswiki::putBackBlocks( \$_[0], $removedTextareas, 'noautolink',
+            'noautolink' );
     }
 }
 
@@ -213,7 +211,7 @@ sub _findAbbrev {
 __END__
 Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 
-  Copyright (C) 2010 George Clark, geonwiki@fenachrone.com
+  Copyright (C) 2010-2016 George Clark, geonwiki@fenachrone.com
 
  This plugin contains code adapted from the SingletonWikiWordPlugin
    Copyright (C) 2000-2001 Andrea Sterbini, a.sterbini@flashnet.it
